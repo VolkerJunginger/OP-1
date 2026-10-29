@@ -12,8 +12,6 @@ clock clicks removed from the dry monitor. Requires **Opus 2 on firmware #246**.
 - [Very short manual](Pulse-Sync/MANUAL.txt)
 - [Source and build instructions](Pulse-Sync/README.md)
 
-Clock following and input muting were confirmed on the owner's original OP-1 on
-29 October 2026. CPU load and timing jitter have not been measured.
 
 ## License and credits
 
