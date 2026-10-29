@@ -1,4 +1,4 @@
-# Pulse Sync 0.1.2
+# Pulse Sync 0.1.3
 
 A background plugin for **Opus 2 on the original OP-1, firmware #246**. Feed a
 **line-level 24 PPQ clock** into the audio input to follow an external clock.
@@ -21,9 +21,16 @@ queue and clock-follow diagnostics. Internal input resampling is not automatical
 excluded; use line in. Separate sampling/recording taps still have access to input.
 Do not send a competing MIDI clock over USB.
 
+## Identity update
+
+ID: `esc.pulsesync` (Opus requires lowercase IDs). Author: `ESC_CODE`.
+Version 0.1.3 changes identity/version metadata only; its executable code is
+identical to the hardware-confirmed 0.1.2 build. Replace the old file rather than
+loading both identities. The new ID starts a new settings folder.
+
 ## Validation
 
-**The owner confirmed clock sync and input muting work on an original OP-1 on
+**The owner confirmed clock sync and input muting in version 0.1.2 on an original OP-1 on
 29 October 2026.** That is a check on one setup, not a measurement of every
 configuration. Hardware CPU and timing jitter remain unmeasured. The default
 Opus CPU protection remains enabled. Hold Stop while powering on to start without
@@ -35,16 +42,16 @@ for the firmware integration details.
 ## Complete source and build
 
 All plugin code, tests, SDK headers and kit build tools are in
-[Source/plugin-kit](Source/plugin-kit). The plugin is in `plugins/volker.pulsesync`.
+[Source/plugin-kit](Source/plugin-kit). The plugin is in `plugins/esc.pulsesync`.
 Install Blackfin GCC 13.3.0 as described in the bundled kit's
 [getting-started guide](Source/plugin-kit/docs/getting-started.md), then from this
 folder:
 
 ```sh
 export OP1_BFIN_TOOLCHAIN=/path/to/blackfin-toolchain
-python3 Source/plugin-kit/plugin_tool.py build Source/plugin-kit/plugins/volker.pulsesync --out build/pulsesync.opmod
+python3 Source/plugin-kit/plugin_tool.py build Source/plugin-kit/plugins/esc.pulsesync --out build/pulsesync.opmod
 python3 Source/plugin-kit/plugin_tool.py show build/pulsesync.opmod
-clang -std=c11 -O1 -Wall -Wextra -Werror -fsanitize=address,undefined -ISource/plugin-kit/sdk Source/plugin-kit/plugins/volker.pulsesync/tests/host.c -o build/pulse-host
+clang -std=c11 -O1 -Wall -Wextra -Werror -fsanitize=address,undefined -ISource/plugin-kit/sdk Source/plugin-kit/plugins/esc.pulsesync/tests/host.c -o build/pulse-host
 ./build/pulse-host
 ```
 

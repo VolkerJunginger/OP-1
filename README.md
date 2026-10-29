@@ -2,16 +2,18 @@
 
 Tools and plugins for the **original Teenage Engineering OP-1**.
 
-## Pulse Sync 0.1.2
+## Pulse Sync 0.1.3
 
 Synchronize the OP-1 to a **24 PPQ** pulse clock through its audio input, with
 clock clicks removed from the dry monitor. Requires **Opus 2 on firmware #246**.
 
 - [Download pulsesync.opmod](Pulse-Sync/pulsesync.opmod?raw=true)
-- [Download the full package with source](Pulse-Sync/downloads/Pulse-Sync-0.1.2.zip)
+- [Download the full package with source](Pulse-Sync/downloads/Pulse-Sync-0.1.3.zip)
 - [Very short manual](Pulse-Sync/MANUAL.txt)
 - [Source and build instructions](Pulse-Sync/README.md)
 
+
+Plugin ID: `esc.pulsesync` (Opus requires lowercase); author: `ESC_CODE`.
 
 ## License and credits
 

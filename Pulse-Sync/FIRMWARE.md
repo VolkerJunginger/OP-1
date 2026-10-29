@@ -64,3 +64,8 @@ New setting `mute_input off,on on "mute clock input"` is packed into bit 18 of t
 ## Owner hardware confirmation — 2026-10-29
 
 After installing version 0.1.2 the owner confirmed that both clock sync and dry-input muting work. Earlier statements above about those checks being pending describe the development history. Hardware CPU cycles, jitter and exhaustive page/routing/coexistence checks were not measured or established by that report.
+
+
+## 0.1.3 identity update
+
+ID is now esc.pulsesync; author ESC_CODE. Uppercase IDs are rejected by the Opus kit. The complete executable image, imports, relocations, entry, memory and hook layout match 0.1.2 exactly. Only manifest metadata changes; the new id uses a separate settings folder.

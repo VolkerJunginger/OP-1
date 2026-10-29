@@ -63,7 +63,7 @@ static void stream(unsigned rate,unsigned bpm,int neg) {
     assert(detected==expected);assert(sent==expected);assert(dropped==0);
 }
 int main(void) {
-    struct opl_self self={sizeof self,"volker.pulsesync",0,0};assert(opl_init(&self)==0);
+    struct opl_self self={sizeof self,"esc.pulsesync",0,0};assert(opl_init(&self)==0);
     for(unsigned r=0;r<2;r++)for(unsigned b=0;b<3;b++)for(int p=0;p<2;p++) {
         const unsigned bpms[]={60,120,300};stream(r?22050:44100,bpms[b],p);
     }

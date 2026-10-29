@@ -1,7 +1,9 @@
-PULSE SYNC 0.1.2 — QUICK MANUAL
+PULSE SYNC 0.1.3 — QUICK MANUAL
 Original OP-1 with Opus 2
+ID: esc.pulsesync | Author: ESC_CODE
 
-1. Copy pulsesync.opmod into mods, eject and restart.
+1. Replace the old pulsesync.opmod in mods, eject and restart.
+   Remove any other old Pulse Sync copy. The new ID starts fresh settings.
 2. Feed a line-level 24 PPQ clock into the audio input.
    Attenuate modular CV first; do not connect raw CV directly.
 3. Select line in with SHIFT + MIC and keep the input active.

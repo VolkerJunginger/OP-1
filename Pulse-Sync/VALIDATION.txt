@@ -1,37 +1,26 @@
-OWNER HARDWARE CONFIRMATION, 2026-10-29: sync and input muting work.
-CPU and jitter remain unmeasured.
+Pulse Sync 0.1.3 — identity update, 2026-10-29
 
-Pulse Sync 0.1.2, 2026-10-29
+ID: esc.pulsesync (lowercase is required by Opus)
+Author: ESC_CODE
+Version: 0.1.3
 
-User confirmed: 0.1.1 clock sync works on original OP-1; pulses are audible.
-0.1.2 adds the documented dry-input skip service in a pre-FX audio callback.
-Mute is default on and scoped to enabled Pulse Sync in external Sync modes 2/4.
-Capture, instrument sound buffers, input routing settings and the MIDI clock path
-are preserved. Owner subsequently confirmed that clock sync AND input muting work on hardware
-on 2026-10-29. This is the tested 0.1.2 binary, preserved without a rebuild.
+PASS: official Blackfin build and read-back.
+PASS: compared against hardware-confirmed 0.1.2: executable image, zero fill,
+entry, imports, relocations and firmware places are identical. Only manifest
+identity/author/version changed. No DSP, routing or clock behavior changed.
 
-Desktop/build PASS: warnings-as-errors Blackfin GCC 13.3.0 build; official two-base
-link/relocation verification and .opmod read-back.
-Host ASan/UBSan simulations PASS, including all previous clock/queue tests plus
-mute policy, either instrument, normal-monitor restoration policy, unchanged
-capture/instrument buffers, and detector continuity while toggling mute.
-The host service is a mock: these tests do not prove actual OP-1 audio muting.
+Hardware: user confirmed sync and input muting in 0.1.2. Version 0.1.3 metadata
+has not been separately loaded on the OP-1. CPU and jitter remain unmeasured.
+Normal CPU protection retained. The new id uses a fresh settings folder.
+Replace the old plugin; do not load both identities simultaneously.
 
-Image 1872 bytes; zero fill 48; 116 relocations; 9 imports.
-New imports: opus_on_pre_fx, opus_skip_dry_input (documented SDK; export located
-in owner's local Opus firmware). Existing checked firmware place is unchanged.
-CPU policy unchanged: unmeasured, normal protection retained. Hardware CPU and
-jitter unmeasured. No checked device line fabricated for version 0.1.2.
-
-SHA-256: f5b245cf3d0aa57cd36cf4a9ac8bd6bb686ddc39827ca70849a2e2fc0c344f7c
-
-PASS: 12 noisy 24-PPQ streams (60/120/300 BPM, both rates/polarities), held gates, ringing, stale buffers, enable/sync modes and nonzero-input-flag regression, queue bounds/rollover, stale bursts, extremes, original-call forwarding, mute policy, audio/capture preservation, mute toggle continuity.
+SHA-256: ec9d6a59a3b0774d851e1d0e916d2096905578f9d0722071a45488ac4588b009
 
 opmod     1
-id        volker.pulsesync
+id        esc.pulsesync
 name      Pulse Sync
-author    volker
-version   0.1.2
+author    ESC_CODE
+version   0.1.3
 core      2.0
 adds      background 24 ppq audio pulse to internal midi clock prototype
 setting   enabled off,on on "pulse sync"

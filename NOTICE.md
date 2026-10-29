@@ -19,8 +19,8 @@ LICENSE are retained in Pulse-Sync/Source/plugin-kit.
 - Plugin kit: https://github.com/LizardMan245/opus/tree/main/plugin-kit
 - Upstream license: https://github.com/LizardMan245/opus/blob/main/plugin-kit/LICENSE
 
-The plugin-kit snapshot used to build the tested 0.1.2 binary is included, with
-Pulse Sync added under plugins/volker.pulsesync. Existing upstream kit files are
+The plugin-kit snapshot used to build the tested 0.1.2 binary (also used for the 0.1.3 metadata-only update) is included, with
+Pulse Sync added under plugins/esc.pulsesync. Existing upstream kit files are
 preserved. Complete source and build scripts are supplied alongside the binary.
 The Blackfin GCC toolchain is obtained separately using the included instructions.
 
