@@ -1,0 +1,17 @@
+PULSE SYNC 0.1.2 — QUICK MANUAL
+Original OP-1 with Opus 2
+
+1. Copy pulsesync.opmod into mods, eject and restart.
+2. Feed a line-level 24 PPQ clock into the audio input.
+   Attenuate modular CV first; do not connect raw CV directly.
+3. Select line in with SHIFT + MIC and keep the input active.
+4. Select Sync on the tempo screen. Play/stop stays manual.
+
+SETTINGS
+Opus menu > T2 > Pulse Sync > blue push:
+- Pulse sync: on/off.
+- Mute clock input: on hides the clicks while sync continues.
+- Pulse threshold: lower for missed pulses; raise for false triggers.
+- Pulse polarity: positive or negative edge.
+
+Defaults: sync on, mute on, threshold 1024, positive polarity.

@@ -1,0 +1,12 @@
+opmod     1
+id        volker.pulsesync
+name      Pulse Sync
+author    volker
+version   0.1.2
+core      2.0
+adds      background 24 ppq audio pulse to internal midi clock prototype
+setting   enabled off,on on "pulse sync"
+setting   mute_input off,on on "mute clock input"
+setting   threshold 64 16000 1024 "pulse threshold"
+setting   polarity positive,negative positive "pulse polarity"
+place     jump 0x01967614 pulse_input expect 00e80000 as input_meter
