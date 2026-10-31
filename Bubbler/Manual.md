@@ -45,18 +45,8 @@ On **page 3**, keep **Shift** held and **push orange** to cycle:
 
 **Off → Key → −12 → −7 → +7 → +12**
 
-This sets each new grain’s base transposition. Its value appears below Pitch Var. **Key mode shows only a keyboard icon** and follows the latest MIDI or OP-1 keyboard note. **MIDI 60 (C4) is unison**; releasing a note leaves its pitch selected.
+This sets each new grain’s base transposition. Its value appears below Pitch Var. **Key mode ** follows the latest MIDI or OP-1 keyboard note. **MIDI 60 (C4) is unison**; releasing a note leaves its pitch selected.
 
 Pitch Var adds its octave on top of the base pitch. For example, **+7** with full variation produces **−5 or +19 semitones**. Very high MIDI transpositions may use shorter grains.
 
 Base pitch applies to all active Bubbler instances and **starts Off on every restart**. The encoder settings are stored with each sound.
-
-## The picture
-
-The boy brightens with Mix and always stays visible. More Feedback adds green bubbles; Time changes the blue wand; Density brings in white glints and sparkles. The illustration follows **only page 1**—turning page 2 or 3 controls does not change it.
-
-## CPU and scope
-
-The owner reports approximately **3% CPU at default settings** and **5% at the observed maximum** on the OP-1. These are diagnostics readings, not a guarantee for every setup.
-
-This version uses the current Bubbler parameter format. Sounds from **0.4.1–0.5.0** keep their settings. For earlier builds, select another effect and then Bubbler to load fresh defaults. The original desktop plugin’s 10-second range, time lock, pitch-button chord selection and just intonation are not included.
