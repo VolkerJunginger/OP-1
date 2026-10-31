@@ -8,7 +8,6 @@ A granular delay for the **original Teenage Engineering OP-1**, running **firmwa
 
 [Download bubbler.opmod](https://github.com/VolkerJunginger/OP-1/raw/refs/heads/bubbler/Bubbler/bubbler.opmod) · [Short manual](Manual.md) · [Build and tests](Source/README.md)
 
-![Bubbler screen — host preview](Design/page-1-default.png)
 
 Bubbler combines up to eight overlapping grains with variable timing, length, reversal, pitch and resonant feedback filtering. The wet engine is mono; the master slot retains stereo dry audio.
 
