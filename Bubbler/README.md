@@ -1,4 +1,8 @@
-# Bubbler 1.0.0 — ESC_CODE
+# Bubbler 1.0.0 — +bubbler port
+
+**An OP-1 / Opus port of +bubbler, the granular-delay device by [Tom Erbe / SoundHack](https://www.soundhack.com/).**
+
+Original device and granular-delay algorithm: **Tom Erbe / SoundHack**. OP-1 port and adaptation: **ESC_CODE**. Built on the **[Opus framework and plugin kit by LizardMan](https://github.com/LizardMan245/opus)**.
 
 A granular delay for the **original Teenage Engineering OP-1**, running **firmware 246 with Opus 2 core 2.2 or later**.
 

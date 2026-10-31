@@ -1,5 +1,7 @@
 # Bubbler 1.0.0
-### ESC_CODE · Original OP-1 / Opus
+### OP-1 port by ESC_CODE
+
+A port of **+bubbler by [Tom Erbe / SoundHack](https://www.soundhack.com/)**, built on the **[Opus framework and plugin kit by LizardMan](https://github.com/LizardMan245/opus)**.
 
 Bubbler is a mono granular delay. It reads pieces of recorded sound from a delay buffer, gives them smooth envelopes and overlaps them into echoes, clouds and reversed textures. The master slot retains the stereo dry signal.
 

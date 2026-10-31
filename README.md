@@ -2,9 +2,13 @@
 
 Tools and plugins for the **original Teenage Engineering OP-1**.
 
-## Bubbler 1.0.0 — ESC_CODE
+## Bubbler 1.0.0 — +bubbler port
 
-A granular delay for Opus, released on the `bubbler` branch.
+**An OP-1 / Opus port of +bubbler, the granular-delay device by [Tom Erbe / SoundHack](https://www.soundhack.com/).**
+
+Original device and granular-delay algorithm: **Tom Erbe / SoundHack**. OP-1 port and adaptation: **ESC_CODE**. Built on the **[Opus framework and plugin kit by LizardMan](https://github.com/LizardMan245/opus)**.
+
+Released on the `bubbler` branch.
 
 - [Download bubbler.opmod](https://github.com/VolkerJunginger/OP-1/raw/refs/heads/bubbler/Bubbler/bubbler.opmod)
 - [Short manual](Bubbler/Manual.md)
