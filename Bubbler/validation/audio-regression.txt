@@ -1,0 +1,30 @@
+{
+  "dynamic_samples_per_channel": 3200000,
+  "parameter_changes": 3847,
+  "mono_stereo_switching": true,
+  "all_midi_notes_and_octave_variation": true,
+  "settled_fixtures": [
+    "default-mono",
+    "resonant-mono",
+    "half-speed-mono",
+    "half-reverse-mono",
+    "octave-up-mono",
+    "random-octaves-mono",
+    "fractional-fifth-mono",
+    "midi-high-mono",
+    "midi-low-mono",
+    "integer-stride-mono",
+    "default-stereo",
+    "resonant-stereo",
+    "half-speed-stereo",
+    "half-reverse-stereo",
+    "octave-up-stereo",
+    "random-octaves-stereo",
+    "fractional-fifth-stereo",
+    "midi-high-stereo",
+    "midi-low-stereo",
+    "integer-stride-stereo"
+  ],
+  "fixture_samples_each": 352768,
+  "bit_exact": true
+}

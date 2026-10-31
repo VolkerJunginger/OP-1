@@ -1,0 +1,11 @@
+stress: 1,920,000 samples; all 8 grains exercised; mono/stereo, resets and invalid parameters
+ring wrap: 768,000 samples, high feedback, +/-12 semitones, reverse extremes
+extra controls: zero-density silence, maximum density/variation/jitter and randomized pitch
+fast memory: all 8 grain-table / clip-table / scratch configurations match exactly
+PASS: stale-buffer silence, dry/wet endpoints, bounds and arithmetic stress
+PASS: native registration/memory; fresh Density layout; 100,000 packed round trips; three pages, counters, remembered Shift page, scoped arrows, key-up pairing, readout-safe uncached art, mix fade and feedback bubble counts
+PASS: octave probability 0/50/100%; base +7 preserved; 2000/2000/2000 grains
+PASS: all 128 MIDI notes, both directions, octave variation and maximum grain size
+PASS: six transpose modes and MIDI C4 reference; resonance peak energy ratio 200.62
+PASS: all 8192 resonance/frequency combinations and transitions
+PASS: 12000 direct-stride/half-speed comparisons with cubic, including wrap boundaries

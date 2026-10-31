@@ -1,0 +1,6 @@
+# Local build and verification products
+.DS_Store
+__pycache__/
+*.pyc
+Bubbler/Source/.test-build/
+Bubbler/Source/build/

@@ -1,0 +1,17 @@
+opmod     1
+id        esc.bubbler
+name      Bubbler
+author    ESC_CODE
+version   1.0.0
+core      2.2
+adds      effect bubbler
+uses      blue_turn shift nofn modal "time var / filter freq"
+uses      green_turn shift nofn modal "start var / reso"
+uses      white_turn shift nofn modal "size / reverse"
+uses      orange_turn shift nofn modal "size var / pitch var"
+uses      left shift nofn modal "previous settings page"
+uses      right shift nofn modal "next settings page"
+setting   transpose off,key,down12,down7,up7,up12 off "grain transpose"
+uses      orange_push shift nofn modal "transpose on page 3"
+place     jump 0x01a85750 bubbler_note_on expect 00e80400 as grain_note
+checked   device 2026-10-31 0.5.0 audio: owner CPU 3% default, observed peak 5%

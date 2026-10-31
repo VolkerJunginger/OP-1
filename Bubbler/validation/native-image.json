@@ -1,0 +1,8 @@
+{
+  "reference": "Bubbler 0.5.0 owner-approved audio",
+  "release": "Bubbler 1.0.0",
+  "native_image_identical": true,
+  "relocations_imports_and_hook_identical": true,
+  "image_sha256": "28ac2014d586857cb000e2e14858b207fd75894ef3ba89628fb0a841dd1a374e",
+  "image_bytes": 129996
+}

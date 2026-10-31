@@ -1,0 +1,26 @@
+build/bubbler.opmod: esc.bubbler 1.0.0, 135900 bytes, imports fw_shift_held, fw_snprintf, opus_effect_register, opus_fast, opus_fn_held, opus_fx_list_shown, opus_fx_owner, opus_fx_page_shown, opus_on_frame, opus_on_frame_begin, opus_on_frame_under, opus_on_key, opus_on_setting, opus_page_close, opus_page_curve_to, opus_page_dot, opus_page_fill_path, opus_page_line_to, opus_page_move, opus_page_path, opus_page_pixels, opus_page_stroke, opus_page_stroke_line, opus_page_text_right, opus_set_setting; 129996 bytes, 9816 zero fill, 364 relocations (143 hi, 25 hi import, 143 lo, 25 lo import, 28 word)
+opmod     1
+id        esc.bubbler
+name      Bubbler
+author    ESC_CODE
+version   1.0.0
+core      2.2
+adds      effect bubbler
+uses      blue_turn shift nofn modal "time var / filter freq"
+uses      green_turn shift nofn modal "start var / reso"
+uses      white_turn shift nofn modal "size / reverse"
+uses      orange_turn shift nofn modal "size var / pitch var"
+uses      left shift nofn modal "previous settings page"
+uses      right shift nofn modal "next settings page"
+setting   transpose off,key,down12,down7,up7,up12 off "grain transpose"
+uses      orange_push shift nofn modal "transpose on page 3"
+place     jump 0x01a85750 bubbler_note_on expect 00e80400 as grain_note
+checked   device 2026-10-31 0.5.0 audio: owner CPU 3% default, observed peak 5%
+# built by op1mod plugin
+deep      fw_shift_held fw_snprintf
+ram       image 129996 zero 9816
+imports   25
+cpu       unmeasured
+checked: device 2026-10-31 0.5.0 audio: owner CPU 3% default, observed peak 5%
+image 129996 bytes, zero fill 9816, entry +0x944, 364 relocations, imports: fw_shift_held, fw_snprintf, opus_effect_register, opus_fast, opus_fn_held, opus_fx_list_shown, opus_fx_owner, opus_fx_page_shown, opus_on_frame, opus_on_frame_begin, opus_on_frame_under, opus_on_key, opus_on_setting, opus_page_close, opus_page_curve_to, opus_page_dot, opus_page_fill_path, opus_page_line_to, opus_page_move, opus_page_path, opus_page_pixels, opus_page_stroke, opus_page_stroke_line, opus_page_text_right, opus_set_setting
+place grain_note: jump 0x01a85750 -> image+0x51f0, expects 00e80400

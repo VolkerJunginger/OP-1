@@ -1,0 +1,14 @@
+[
+  {
+    "file": "op1_246.op1",
+    "sha256": "c5315218f825f143b415ca554516541898abee843d3a236df0b54c04e1fb13a9",
+    "address": "0x01a85750",
+    "expected_entry": "00e80400"
+  },
+  {
+    "file": "op1_246_opus2.op1",
+    "sha256": "3c624cf6c49c3548dc5bbc113cad3a66fec6784dcd5d643133de70ea20bab951",
+    "address": "0x01a85750",
+    "expected_entry": "00e80400"
+  }
+]
