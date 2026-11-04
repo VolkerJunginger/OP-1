@@ -8,7 +8,7 @@ A mono reverb and effects plugin for the original OP-1 with Opus core 2.8 or lat
 
 ## Install
 
-1. Enter disk mode with **Shift + COM**, then **T3**. Copy `midiverb.opmod` into `mods/`, replacing any older Midiverb build. Eject and restart.
+1. Enter disk mode with **Shift + COM**, then **T3**. Copy `midiverb.opmod` into `mods/`. Eject and restart.
 2. Enter disk mode again. Midiverb creates `mods/mv1rom/`. Supply your own dump for each bank you want to use. Rename the files **exactly** as shown below, copy them into that folder, then eject and leave disk mode.
 3. Select **midiverb** in the synth or drum effect list. Press Orange to cycle through the installed banks.
 
@@ -41,7 +41,6 @@ To open settings, select **Midiverb** in the Opus mods list and press **Blue**. 
 - **LizardMan245 and the Opus contributors** for [Opus and its plugin SDK](https://github.com/LizardMan245/opus).
 - **Eric Brombaugh and Paul Schreiber** for the [original MidiVerb reverse engineering](https://github.com/emeb/MIDIVerb_RE), including the compiler and circuit models.
 - **thement and contributors** for [midiverb_emulator](https://github.com/thement/midiverb_emulator), including the MidiVerb II and MidiFex program code and modulation model.
-- **Volker Junginger / ESC_CODE** for the Opus port.
 
 This is an independent, unofficial project. It is not affiliated with, sponsored by, or endorsed by Alesis. Product names identify the original hardware and compatible ROM banks.
 
