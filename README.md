@@ -34,11 +34,11 @@ A mono ROM-based reverb and effects device by **ESC_CODE**, for the original OP-
 The native build and desktop tests passed.
 ## Other devices
 
-## Pulse Sync 1.0.1
+## Pulse Sync 1.0.7
 
 A background plugin by **ESC_CODE** that synchronizes the original OP-1 to an external pulse clock through its audio input. Supports **24/48/96 PPQ** and **1/4, 1/8, 1/16 or 1/32 note clocks**, converted to the OP-1’s 24 PPQ MIDI clock. Includes adjustable pulse detection, silent clock monitoring, optional AutoStart/Stop and USB/Pulse clock priority.
 
-[**Download Pulse Sync**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/Pulse-Sync/pulsesync.opmod) · [**Manual, settings and source**](Pulse-Sync) · [**Complete package**](Pulse-Sync/downloads/Pulse-Sync-1.0.1.zip)
+[**Download Pulse Sync**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/Pulse-Sync/pulsesync.opmod) · [**Manual, settings and source**](Pulse-Sync) · [**Changelog**](Pulse-Sync/CHANGELOG.md) · [**Complete package**](Pulse-Sync/downloads/Pulse-Sync-1.0.7.zip)
 
 Requires **original OP-1 firmware 246 and Opus 2**. [Opus attribution and licences](Pulse-Sync/NOTICE.md).
 

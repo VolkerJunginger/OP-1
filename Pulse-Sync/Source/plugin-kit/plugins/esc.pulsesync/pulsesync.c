@@ -1,16 +1,18 @@
-/* Pulse Sync 1.0.1, GPL-3.0-or-later. R246 only; see FIRMWARE.md. */
+/* Pulse Sync 1.0.7, GPL-3.0-or-later. R246 only; see FIRMWARE.md. */
 #include "opus_plugin.h"
 #include "op1fw.h"
 #include "pulse_core.h"
 #ifdef PULSE_HOST_TEST
 extern volatile short test_input[64];
-extern volatile unsigned test_ring[1024], test_wr, test_rd, test_mode, test_input_mode, test_rx_phase, test_follow, test_fallback, test_com;
+extern volatile unsigned test_ring[1024], test_wr, test_rd, test_mode, test_input_mode, test_rx_phase, test_follow, test_fallback, test_com, test_input_source, test_edit_mode;
 #define INPUT test_input
 #define RING test_ring
 #define WR test_wr
 #define RD test_rd
 #define MODE test_mode
 #define INPUT_MODE test_input_mode
+#define INPUT_SOURCE test_input_source
+#define EDIT_MODE test_edit_mode
 #define RX_PHASE test_rx_phase
 #define FOLLOW test_follow
 #define FALLBACK test_fallback
@@ -27,6 +29,8 @@ static void publish(void) { }
 #define RD (*(volatile unsigned *)0x01ab1514u)
 #define MODE (*(volatile const unsigned *)0x018c1870u)
 #define INPUT_MODE (*(volatile const unsigned *)0xff8010b0u)
+#define INPUT_SOURCE (*(volatile const unsigned *)0x01dd4d50u)
+#define EDIT_MODE (*(volatile const unsigned *)0xff907d58u)
 #define RX_PHASE (*(volatile const unsigned *)0x018b6010u)
 #define FOLLOW (*(volatile const unsigned char *)0x018c1898u)
 #define FALLBACK (*(volatile const unsigned char *)0x018c1874u)
@@ -243,14 +247,28 @@ int pulse_input(int a, int b, int c)
     opus_cpu_charge(me, cycles() - start);
     return result;
 }
-/* Audio callback: suppress the stock dry monitor, leaving capture and sound buffers intact.
- * The core consumes this request at its dry-input routing hook. */
+/* Stock mic/line control uses mode 0 for external input and 2 for off.
+ * Its source enum is separate: 0 mic, 1 line, 2 USB, 3 radio, 4 resample. */
+static int line_monitor_muted(unsigned cfg, unsigned mode)
+{
+    return (cfg & 0x50000u) == 0x50000u && (mode == 2 || mode == 4) &&
+           INPUT_MODE == 0 && INPUT_SOURCE == 1;
+}
+
 static void mute_clock_input(int instrument, short *buf)
 {
-    unsigned cfg = config;
     (void)instrument; (void)buf;
-    if ((cfg & 0x50000u) == 0x50000u && (MODE == 2 || MODE == 4))
+    if (line_monitor_muted(config, MODE))
         opus_skip_dry_input();
+}
+
+/* Shift + Mic enters stock edit mode 5. The banner tracks the selection
+ * even with input off, so the user can see what will happen when enabled. */
+static void draw_mute_notice(unsigned short *buf)
+{
+    (void)buf;
+    if (EDIT_MODE == 5 && INPUT_SOURCE == 1 && (config & 0x50000u) == 0x50000u)
+        opus_page_text_right(me, 0, 85, 118, 9, OPUS_COLOR_E1, "pulse sync");
 }
 /* Sequencer thread, before the normal stock MIDI drain. */
 static void block(void)
@@ -365,5 +383,6 @@ int opl_init(struct opl_self *self)
     opus_on_block(self, block);
     opus_on_pre_fx(self, mute_clock_input);
     opus_on_panel(self, panel);
+    opus_on_frame(self, draw_mute_notice);
     return 0;
 }

@@ -34,6 +34,11 @@ def read(address, size):
     assert all(coverage), f'{address:#x} not wholly in plain blocks'
     return bytes(result)
 expected = {
+    0x019b6160: '09e1504d49e1dd0108931000',  # selected input source storage
+    0x019672e4: '09e1b01049e180ff08911000',  # input toggle state getter
+    0x019ac8f4: '1060fde3fdd4',  # stock input off path
+    0x018e4090: 'f0f19d0114f29d011cf29d0124f29d01',  # source/gain mapping
+
     0x019e3938: "03e32ed7",
     0x019e3978: "03e30ed7",
     0x01967614: '00e80000c4040ce1',  # input meter and generated trampoline prologue

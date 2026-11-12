@@ -1,3 +1,3 @@
-Pulse Sync 1.0.1
+Pulse Sync 1.0.7
 
-The owner confirmed on an original OP-1 that 1.0.1 restores pulse tempo lock after USB MIDI use. The firmware signature checks and host tests passed. Automatic transport, simultaneous clock sources and CPU load still await hardware testing.
+Build and host tests passed. The 1.0.1 USB tempo-lock fix was confirmed on an original OP-1. The 1.0.7 line-in mute and final label placement still need hardware verification.

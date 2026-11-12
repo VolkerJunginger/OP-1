@@ -1,4 +1,4 @@
-PULSE SYNC 1.0.1
+PULSE SYNC 1.0.7
 Original OP-1 with Opus 2 on firmware #246
 
 Replace pulsesync.opmod in mods, eject and restart.
@@ -33,7 +33,9 @@ Input Rate
 All settings feed 24 PPQ MIDI clock to the OP-1.
 Note divisions need two pulses to measure the interval.
 
-Mute Clock Input defaults to on. Pulse Polarity selects positive/negative.
+Mute Clock Input defaults to on and mutes only Line In in Sync mode.
+On Shift + Mic, a small blue Pulse Sync label shows that mute is enabled
+for the selected Line In source. Pulse Polarity selects positive/negative.
 The panel displays USB, pulse or waiting for the selected clock source.
 
 The owner confirmed on an original OP-1 that 1.0.1 restores pulse tempo lock after USB MIDI use. The firmware signature checks and host tests passed. Automatic transport, simultaneous clock sources and CPU load still await hardware testing.

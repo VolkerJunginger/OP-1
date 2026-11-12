@@ -8,10 +8,18 @@
 #define PULSE_HOST_TEST
 #include "../pulsesync.c"
 volatile short test_input[64];
-volatile unsigned test_ring[1024], test_wr, test_rd, test_mode, test_input_mode, test_rx_phase, test_follow, test_fallback, test_com;
+volatile unsigned test_ring[1024], test_wr, test_rd, test_mode, test_input_mode, test_rx_phase, test_follow, test_fallback, test_com, test_input_source, test_edit_mode;
 static int enabled = 1, threshold = 5, polarity, mute_input=1, input_rate, autostart, priority;
 static void (*block_cb)(void);
 static void (*mute_cb)(int,short *);
+static void (*frame_cb)(unsigned short *);
+static unsigned notices;
+void opus_on_frame(struct opl_self *s, void (*f)(unsigned short *)) { (void)s;frame_cb=f; }
+void opus_page_text_right(struct opl_self *s,int slot,int x,int y,int size,int colour,const char *text) {
+    (void)s;(void)slot;
+    assert(x==85 && y==118 && size==9 && colour==OPUS_COLOR_E1 && strcmp(text,"pulse sync")==0);
+    ++notices;
+}
 static unsigned skips;
 static unsigned original_calls;
 int orig_01967614(int a, int b, int c) { ++original_calls; assert(a==11 && b==22 && c==33); return 77; }
@@ -34,7 +42,7 @@ void opus_panel_text(struct opl_self *s,int slot,int x,int y,int size,int colour
 int fw_snprintf(char *b, unsigned n, const char *f, ...) { va_list a; va_start(a,f);int r=vsnprintf(b,n,f,a);va_end(a);return r; }
 static void reset(void) {
     memset((void *)test_input,0,sizeof test_input);memset((void *)test_ring,0,sizeof test_ring);
-    test_wr=test_rd=0;test_mode=2;test_input_mode=0;test_rx_phase=test_follow=test_com=0;test_fallback=1;sequence_blocks=0;
+    test_wr=test_rd=0;test_mode=2;test_input_mode=0;test_input_source=1;test_rx_phase=test_follow=test_com=0;test_fallback=1;sequence_blocks=0;
     detected=sent=dropped=input_peak=input_blocks=0;consumed=previous_config=0;
     enabled=1;threshold=5;polarity=0;mute_input=1;skips=0;pulse_reset(&detector);input_rate=0;autostart=priority=0;usb_seen=pulse_seen=pulse_period=transport_running=0;
     selected_source=SOURCE_NONE;test_cycles=0;clock_rate=0;reset_conversion();settings(0,0);
@@ -347,6 +355,17 @@ int main(void) {
     mute_input=1;enabled=0;settings(0,0);mute_cb(0,sound);assert(skips==1);
     enabled=1;settings(0,0);test_mode=0;mute_cb(0,sound);assert(skips==1);
     test_mode=4;mute_cb(0,sound);assert(skips==2);
+    for (unsigned source=0;source<=4;++source) {
+        reset();test_input_source=source;test_input_mode=2;
+        mute_cb(0,sound);assert(skips==0);
+        test_input_mode=0;
+        mute_cb(0,sound);assert(skips==(source==1));
+    }
+    reset();test_input_mode=2;notices=0;
+    test_edit_mode=2;frame_cb(0);assert(notices==0);
+    test_edit_mode=5;test_input_source=0;frame_cb(0);assert(notices==0);
+    test_input_source=1;mute_input=0;settings(0,0);frame_cb(0);assert(notices==0);
+    mute_input=1;settings(0,0);frame_cb(0);assert(notices==1);
     /* Toggling mute must not reset an already-high detector and invent a tick. */
     reset();test_input[1]=10000;render();unsigned before=detected;
     mute_input=0;settings(0,0);render();assert(detected==before);
