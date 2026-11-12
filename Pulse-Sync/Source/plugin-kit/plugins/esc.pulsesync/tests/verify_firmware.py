@@ -38,6 +38,9 @@ expected = {
     0x019e3978: "03e30ed7",
     0x01967614: '00e80000c4040ce1',  # input meter and generated trampoline prologue
     0x019e31a4: '00e80600e305a66f08e1100548e1ab01',  # stock receive parser / queue address
+    0x019e39b2: '21e4170022e4180003e3bbd8',  # F8 timestamp args and tempo call
+    0x01a5eb38: '383001305056010ca66f0a306c18',  # zero arguments branch to current time
+    0x01a5ec20: 'fde36278',  # stock timer call
     0x019e3988: '20e41900206420e6190060a0000c0918',  # F8 adds four internal ticks
     0x01a5e794: '09e1701849e18c0108911000',  # selected sync-mode getter
     0x018e462c: '88399e0134329e01d0399e01503a9e01ba3a9e01',  # F8..FC dispatch table

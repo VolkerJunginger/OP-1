@@ -87,3 +87,13 @@ Filtering occurs at both stock mode queries, including newly arrived USB
 clocks that reach the parser after the block callback. Notes and ordinary
 MIDI data retain their normal parser paths. Real-device coexistence and
 transport testing remain pending for 1.0.0.
+
+### Pulse tick timestamps (1.0.1)
+
+The realtime mode query records whether the current accepted packet is a
+tagged F8. The parser then repurposes P5 before dispatch, so the F8-only hook
+at 0x019e39ba uses that recorded flag. For a tagged tick it passes zero in
+R1/R2 to 0x01a5eb30, taking the stock current-time path through 0x01a5ec1c.
+Untagged packets keep the original timestamp arguments. Neither shared USB
+timestamp word is written by the plugin. Verified against the stock #246
+instruction bytes. Tempo reacquisition still needs a physical OP-1 test.

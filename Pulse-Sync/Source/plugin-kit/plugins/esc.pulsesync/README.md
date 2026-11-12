@@ -1,10 +1,10 @@
-# Pulse Sync 1.0.0
+# Pulse Sync 1.0.1
 
 A background Opus 2 plugin for the original OP-1 on firmware #246.
 It converts line-level pulse clocks to 24 PPQ MIDI clock and suppresses
 their dry monitoring signal.
 
-[**Download plugin**](../../../../pulsesync.opmod) · [**Manual**](../../../../MANUAL.txt) · [**Complete package and source**](../../../../downloads/Pulse-Sync-1.0.0.zip)
+[**Download plugin**](../../../../pulsesync.opmod) · [**Manual**](../../../../MANUAL.txt) · [**Complete package and source**](../../../../downloads/Pulse-Sync-1.0.1.zip)
 
 Pulse Sync lets a drum machine, sequencer or modular clock set the OP-1 tempo
 through its audio input. It runs in the background when loaded and converts
@@ -42,13 +42,13 @@ Before a second pulse establishes the interval, it waits 4 seconds. USB
 activity expires after 500 ms. When USB takes over, its transport messages
 control playback. Changing AutoStart to off leaves playback under manual control.
 
+## 1.0.1
+
+Fixes pulse tempo lock after USB MIDI use. The firmware uses the current time for Pulse Sync ticks and keeps the original timestamps for USB MIDI. Thanks to Hundekraft for reporting the issue in PR #1.
+
 ## Verification
 
-Version 0.1.4 was confirmed on the owner's OP-1. Version 1.0.0 retains the 0.1.5 implementation and passed desktop
-tests for all previous conversions and the new threshold mapping, transport
-ordering, source arbitration, fallback, counter rollover and queue failure
-handling. Real OP-1 transport behavior, simultaneous clock sources and CPU
-load still need hardware testing.
+The owner confirmed on an original OP-1 that 1.0.1 restores pulse tempo lock after USB MIDI use. The firmware signature checks and host tests passed. Automatic transport, simultaneous clock sources and CPU load still await hardware testing.
 
 The stock MIDI receiver's two realtime sync-mode queries are intercepted
 with checked firmware places. Injected messages carry an origin tag in their

@@ -2,7 +2,7 @@ opmod     1
 id        esc.pulsesync
 name      Pulse Sync
 author    ESC_CODE
-version   1.0.0
+version   1.0.1
 core      2.0
 adds      convert external audio pulses to 24 ppq midi clock
 setting   enabled off,on on "pulse sync"
@@ -15,3 +15,4 @@ setting   autostart off,on off "autostart"
 setting   priority usb,pulse usb "clock priority"
 place     call 0x019e3938 pulse_sync_filter expect 03e32ed7 as midi_sync_filter_a
 place     call 0x019e3978 pulse_sync_filter expect 03e30ed7 as midi_sync_filter_b
+place     call 0x019e39ba pulse_clock_timestamp expect 03e3bbd8 as pulse_clock_timestamp

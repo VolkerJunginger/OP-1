@@ -81,3 +81,26 @@ _pulse_sync_filter:
     ASTAT = [SP++];
     RETS = [SP++];
     RTS;
+
+/* R246 F8-only call site. The preceding sync query records the packet tag
+ * before the parser repurposes P5. R1/R2 are the timestamp arguments.
+ * Tail-jump with RETS intact so stock returns straight to the parser. */
+.align 2
+.global _pulse_clock_timestamp
+.type _pulse_clock_timestamp, STT_FUNC
+_pulse_clock_timestamp:
+    [--SP] = ASTAT;
+    [--SP] = R3;
+    P0.L = _pulse_use_current_time;
+    P0.H = _pulse_use_current_time;
+    R3 = [P0];
+    CC = R3 == 0;
+    IF CC JUMP .Lstock_timestamp;
+    R1 = 0;
+    R2 = 0;
+.Lstock_timestamp:
+    R3 = [SP++];
+    ASTAT = [SP++];
+    P0.L = 0xeb30;
+    P0.H = 0x01a5;
+    JUMP (P0);

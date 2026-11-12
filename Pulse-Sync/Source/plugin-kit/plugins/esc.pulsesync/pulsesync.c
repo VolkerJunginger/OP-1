@@ -1,4 +1,4 @@
-/* Pulse Sync 0.1.5, GPL-3.0-or-later. R246 only; see FIRMWARE.md. */
+/* Pulse Sync 1.0.1, GPL-3.0-or-later. R246 only; see FIRMWARE.md. */
 #include "opus_plugin.h"
 #include "op1fw.h"
 #include "pulse_core.h"
@@ -92,6 +92,9 @@ static unsigned choose_source(unsigned cfg, unsigned now)
     return SOURCE_NONE;
 }
 
+/* Sequencer parser only: refreshed for each realtime packet before dispatch. */
+volatile unsigned pulse_use_current_time;
+
 /* Called by the two verified stock realtime-message sync-mode queries.
  * Injected messages use the otherwise unused realtime padding bytes as a tag.
  * Stock R246 reads only the status byte in this branch. */
@@ -113,6 +116,8 @@ int clock_sync_mode(const unsigned *packet)
             (status == 0xf8u || status == 0xfau || status == 0xfbu || status == 0xfcu))
             result = 0;
     }
+    pulse_use_current_time = tagged && status == 0xf8u &&
+                             (result == 2 || result == 4);
     opus_cpu_charge(me, cycles() - start);
     return result;
 }

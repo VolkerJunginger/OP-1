@@ -245,10 +245,16 @@ static void transport_tests(void)
     assert(clock_sync_mode(&usb_tick) == 0);
     assert(clock_sync_mode(&usb_tick) == 0);
     unsigned tagged_tick = MIDI_TAG | 0xf80fu;
-    assert(clock_sync_mode(&tagged_tick) == 4);
+    assert(clock_sync_mode(&tagged_tick) == 4 && pulse_use_current_time);
+    assert(clock_sync_mode(&tagged_tick) == 4 && pulse_use_current_time);
+    unsigned tagged_start = MIDI_TAG | 0xfa0fu;
+    assert(clock_sync_mode(&tagged_start) == 4 && !pulse_use_current_time);
+    test_mode = 2;
+    assert(clock_sync_mode(&tagged_tick) == 2 && pulse_use_current_time);
+    test_mode = 4;
     enabled = 0;
     settings(0, 0);
-    assert(clock_sync_mode(&usb_tick) == 4);
+    assert(clock_sync_mode(&usb_tick) == 4 && !pulse_use_current_time);
 
     /* Lowercase settings migrate invalid old raw thresholds to the default. */
     reset();
