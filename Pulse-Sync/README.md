@@ -9,3 +9,5 @@ Select **L+R**, **L**, or **R** for the clock. The chosen channels are muted bef
 The build and host tests passed. Hardware verification of 1.1.9 is pending.
 
 The ZIP includes the pinned Opus SDK and source. Build with Blackfin GCC using `python3 Source/plugin-kit/plugin_tool.py build Source/plugin-kit/plugins/esc.pulsesync`. See [LICENSE](LICENSE) and [NOTICE](NOTICE.md).
+
+OP1R inspired Pulse Sync’s approach to separating clock and audio across the two Line In channels. [OP1R project](https://github.com/pcppcp/op1r)
