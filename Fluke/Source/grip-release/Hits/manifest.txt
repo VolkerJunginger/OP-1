@@ -1,0 +1,23 @@
+opmod     1
+id        esc.braidslive
+name      Hits
+author    esc
+version   1.0.0
+core      2.57
+adds      engine hits
+uses      blue_turn drum t1 "pitch / color"
+uses      green_turn noshift drum t1 "timbre"
+uses      white_turn noshift drum t1 "engine parameter"
+uses      orange_turn drum t1 "length / high cut"
+uses      blue_push noshift nofn drum t1 "next model"
+uses      green_push noshift nofn drum t1 "next choke group"
+uses      green_turn shift nofn drum t1 "pad level"
+uses      white_turn shift nofn drum t1 "low cut"
+uses      white_push noshift nofn drum t1 "next decimate depth"
+setting   decimate_scope perpad,global perpad "decimate scope"
+setting   decimate_depth off,12bit,8bit,4bit off "global decimate depth"
+uses      keyboard shift nofn drum t1 "select HITS pad"
+uses      split drum t1 "jump / remove edited lane"
+uses      orange_push noshift nofn drum t1 "Fluke hold"
+exports hits_is_selected hits_mod_publish_v2 hits_mod_keyboard hits_edit_key hits_fluke_hold_state hits_fluke_hold_key
+exports hits_connect_fluke

@@ -1,0 +1,25 @@
+opmod 1
+id esc.fluke
+name Fluke
+author Volker / Marbles by E. Gillet
+version 2.0.0
+core 2.57
+adds synth sequencer fluke
+adds drum sequencer fluke
+uses blue_turn modal "length / range or random"
+uses green_turn modal "density or pulses / style"
+uses white_turn modal "rotate / direction"
+uses orange_turn modal "rate or global swing"
+uses blue_push modal "new melody / drum lanes"
+uses green_push modal "density or pulses"
+uses white_push modal "scale (melody only)"
+uses orange_push modal "hold on or off"
+uses keyboard modal "root / preview / drum edit"
+uses lift modal "save melody/drum"
+uses drop modal "recall melody/drum"
+uses split modal "jump all / edit: remove"
+setting globalkey off,on on "global key"
+
+setting drumkeys preview,transpose transpose "drum keys"
+setting autostart play+rec,rec,off rec "autostart"
+setting hitsoverlay off,on on "Hits overlay"

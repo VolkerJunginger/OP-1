@@ -1,0 +1,9 @@
+opmod 1
+id op1lab.cleancomp
+name GRIP
+author op1lab
+version 1.0.0
+core 2.34
+adds effect grip
+uses white_push noshift nofn modal "kick sc"
+uses orange_push noshift nofn modal "fluke hold"

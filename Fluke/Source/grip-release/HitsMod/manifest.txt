@@ -1,0 +1,15 @@
+opmod 1
+id esc.hitsmod
+name FLUX
+author esc
+version 1.0.0
+core 2.33
+needs esc.braidslive 1.0.0
+adds lfo flux
+uses keyboard shift nofn drum t4 "select HITS pad"
+uses orange_push noshift nofn drum t4 "Fluke hold"
+uses blue_push noshift nofn drum t4 "select LFO A or B"
+uses blue_turn noshift nofn drum t4 "wave"
+uses green_turn noshift nofn drum t4 "rate in ms"
+uses white_turn noshift nofn drum t4 "depth"
+uses orange_turn noshift nofn drum t4 "target"

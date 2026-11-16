@@ -1,0 +1,41 @@
+{
+  "fetched": "2026-11-05",
+  "repository": "pichenettes/eurorack",
+  "files": [
+    {
+      "file": "random_sequence.h",
+      "blob_sha": "7265cf3136d70b5c3d4cbaf2bbb15652cd50e37f",
+      "url": "https://github.com/pichenettes/eurorack/blob/master/marbles/random/random_sequence.h"
+    },
+    {
+      "file": "distributions.h",
+      "blob_sha": "f107241befd3429449e85f0781c3c141b7532db8",
+      "url": "https://github.com/pichenettes/eurorack/blob/master/marbles/random/distributions.h"
+    },
+    {
+      "file": "quantizer.cc",
+      "blob_sha": "4741141a9aed57da383dd8d8107c331a00ac9035",
+      "url": "https://github.com/pichenettes/eurorack/blob/master/marbles/random/quantizer.cc"
+    },
+    {
+      "file": "output_channel.cc",
+      "blob_sha": "40d10c2aad3c3eea7dffc13fb77351e508966f2c",
+      "url": "https://github.com/pichenettes/eurorack/blob/master/marbles/random/output_channel.cc"
+    },
+    {
+      "file": "x_y_generator.cc",
+      "blob_sha": "dd1b108b9800031d1670259e4512e10fd32e0e04",
+      "url": "https://github.com/pichenettes/eurorack/blob/master/marbles/random/x_y_generator.cc"
+    },
+    {
+      "file": "quantizer.h",
+      "blob_sha": "008ea35730c87d6c652e96d3f4be81efb071bb43",
+      "url": "https://github.com/pichenettes/eurorack/blob/master/marbles/random/quantizer.h"
+    },
+    {
+      "file": "settings.cc",
+      "blob_sha": "2946a913fc3df5ec33984c436e6a9b55de4856dd",
+      "url": "https://github.com/pichenettes/eurorack/blob/master/marbles/settings.cc"
+    }
+  ]
+}
