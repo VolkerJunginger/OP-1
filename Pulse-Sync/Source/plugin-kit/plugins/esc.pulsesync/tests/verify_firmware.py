@@ -34,6 +34,9 @@ def read(address, size):
     assert all(coverage), f'{address:#x} not wholly in plain blocks'
     return bytes(result)
 expected = {
+    0x0191ab52: '01e1044841e1a0ff0be16c034be180ff000c1993',
+    0x019672d8: '09e1b41049e180ff08931000',
+
     0x019b6160: '09e1504d49e1dd0108931000',  # selected input source storage
     0x019672e4: '09e1b01049e180ff08911000',  # input toggle state getter
     0x019ac8f4: '1060fde3fdd4',  # stock input off path

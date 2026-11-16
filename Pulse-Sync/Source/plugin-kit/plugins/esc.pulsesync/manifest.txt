@@ -2,14 +2,13 @@ opmod     1
 id        esc.pulsesync
 name      Pulse Sync
 author    ESC_CODE
-version   1.0.7
-core      2.0
+version   1.1.9
+core      2.58
 adds      convert external audio pulses to 24 ppq midi clock
 setting   enabled off,on on "pulse sync"
-setting   mute_input off,on on "mute clock input"
+setting   sync_input l+r,l,r l+r "select sync input"
 setting   threshold 1 10 5 "pulse threshold"
 setting   polarity positive,negative positive "pulse polarity"
-place     jump 0x01967614 pulse_input expect 00e80000 as input_meter
 setting   input_rate 24ppq,48ppq,96ppq,1/4,1/8,1/16,1/32 24ppq "input rate"
 setting   autostart off,on off "autostart"
 setting   priority usb,pulse usb "clock priority"

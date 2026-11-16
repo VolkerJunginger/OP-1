@@ -8,9 +8,28 @@ newer core, and the mods list says why.
 
 This page lists every line a manifest may hold. The C side is in [api.md](api.md).
 
+## Contents
+
+- [A first example](#a-first-example)
+- [The format](#the-format)
+- [All keys](#all-keys)
+- [The required keys](#the-required-keys): `opmod`, `id`, `name`, `author`, `version`, `core`, `priority`
+- [Libraries](#libraries): `needs`, `exports`
+- [Controls](#controls): `uses`
+- [Settings](#settings): `setting`
+- [Themes](#themes): `theme`
+- [Places](#places): `place`
+- [CPU](#cpu): `cpu user`
+- [Notes for people](#notes-for-people): `adds`, `checked`, `breaks`, `removes`, `replace`, `pack`
+- [Lines the build writes](#lines-the-build-writes)
+- [Other keys](#other-keys)
+- [Code-free plugins](#code-free-plugins)
+- [At load: what the mods list says](#at-load-what-the-mods-list-says)
+- [The kit's examples](#the-kits-examples): `examples/opus.halloween`, `examples/opus.zoom`, `examples/opus.bitcrush`, `examples/opus.outatime`
+
 ## A first example
 
-The kit's `examples/opus.zoom`:
+The kit's `examples/opus.zoom`, with a comment on top saying what it does:
 
 ```
 # opus.zoom: on the tape screen, shift + white zooms the tape view (clockwise in).
@@ -31,6 +50,8 @@ uses      white_turn shift tape "zoom the tape view"
   end are dropped.
 - A `#` at the start of a line, or after a space or a tab, starts a comment to the end of the line. A `#` inside a
   word is not a comment, so a choice like `c#` works.
+- Comments are for you and the people who read your source: the build leaves them out of the `.opmod`, which
+  carries only the lines the core reads.
 - Blank lines are ignored.
 - Lines up to 159 characters: the core cuts a longer line there, so the build refuses one whose words (not its
   comment) reach past it.
@@ -55,6 +76,7 @@ uses      white_turn shift tape "zoom the tape view"
 | `uses` | | yes (12) | you | a control it takes |
 | `setting` | | yes (12) | you | a setting the user changes |
 | `theme` | | yes (4) | you | a colour theme it brings |
+| `recolour` | | yes (384) | you | a theme's stock colour and the colour it becomes (core 2.38) |
 | `place` | | yes | you | a hook into the firmware's code |
 | `cpu` | | | you write only `cpu user`; else the build | its audio CPU figure |
 | `adds` | | yes | you | what it adds, for people |
@@ -133,9 +155,45 @@ mods list says "needs core 2.6". Set it to the highest version among the service
 | 2.5 | `opus_engine_show` |
 | 2.6 | another firmware's engines and effects (api.md, Core versions) |
 | 2.7 | `opus_on_settings_rows` |
+| 2.8 | `opus_alloc_audio`, `opus_page_still`, sequencers, preset sources |
+| 2.9 | `opus_called`; no fixed counts of engines, effect types, instances or sequencers |
+| 2.10 | the sampler service (`OPUS_ENGINE_SAMPLE`) |
+| 2.11 | `opus_replace` |
+| 2.12 | `opus_key_post` |
+| 2.13 | `opus_on_key_filter` |
+| 2.14 | `opus_key_timer`, `opus_stock_screen` |
+| 2.15 | every plugin may be a preset source |
+| 2.16 | the journal's USB disk steps |
+| 2.17 | presets as files (`opus_preset_file` and the rest) |
+| 2.18 | `opus_preset_delete` |
+| 2.19 | `opus_drums`, drum kits as files (`opus_kit_file` and the rest) |
+| 2.20 | `opus_folder_refused`, `opus_panel_size` |
+| 2.21 | fast memory on lease, the tempo service, LFO types, `opus_page_text_centre`; the `priority` line |
+| 2.22 | `OPUS_LFO_SOUND` |
+| 2.24 | drum engines (`OPUS_ENGINE_DRUM`, `opus_drum_key`) |
+| 2.25 | `opus_on_key_filter_first` |
+| 2.26 | a drum engine's `render` gets its voice's pitch |
+| 2.27 | an LFO type's page on the drum's T4 too |
+| 2.28 | `opus_stats`, `opus_page_dim` |
+| 2.29 | `opus_frames_late` |
+| 2.30 | `uses fn_hold`: FN held alone as a control |
+
+api.md's Core versions has the same table with each service's section.
 
 The build does not check this line against the functions the plugin calls: a plugin that calls a newer function than
 its `core` line says is still refused on an older core, but with "needs NAME" instead.
+
+### `priority`
+
+```
+priority  high
+```
+
+How the plugin ranks for fast memory (core 2.21 on): `high`, `normal` (without the line) or `low`. The core lends
+the OP-1's small fast memory to the plugins whose audio uses it (`opus_fast_lease`, an effect's or engine's state
+that may move) and, when there is not enough for all of them, takes it from a plugin of lower priority first. Give
+`high` only to a plugin whose sound costs much more without it (a reverb's tank, an engine's voices); most plugins
+need no line. api.md's Memory section has the details.
 
 ## Libraries
 
@@ -161,6 +219,9 @@ call. They declare them from the library's own header and name the library in a 
 parted by spaces; 128 exported names in all, across every loaded library. Needs code (a code-free plugin cannot
 export).
 
+Opus's own library in the starter pack is **orbit3d** (`needs opus.orbit3d 0.2.5`, header `sdk/orbit3d.h`): 3D line
+art for a plugin's page. Its calls: [orbit3d.md](orbit3d.md); its example: `examples/opus.globe`.
+
 ## Controls
 
 ### `uses` (repeatable, up to 12)
@@ -174,7 +235,10 @@ uses      INPUT [shift | noshift] [fn | nofn] [with KEY]
 
 A control the plugin takes. Every key or encoder a plugin acts on is declared, so two plugins never take the same
 one: a plugin whose control meets one a loaded plugin already takes is refused before any of its code runs, and the
-mods list names the other plugin ("shift white turn is taken by zoom"). The mods list shows each plugin's controls
+mods list names the other plugin ("shift white turn is taken by zoom"). Controls on a plugin's own type's page never
+clash with another plugin's of the same type: an engine's T1, an effect's T3 and an LFO type's T4 show only the
+sound's own one at a time, so two engines may both take shift + blue turn on `synth t1` (the type is the manifest's
+`adds engine|effect|lfo NAME` line; core 2.22 on). The mods list shows each plugin's controls
 (the green push on its row). The declaration does not route anything: the plugin's key and knob handlers see every
 event and must check the same conditions themselves.
 
@@ -190,8 +254,10 @@ event and must check the same conditions themselves.
 | `blue_push`, `green_push`, `white_push`, `orange_push` | an encoder's push |
 | `blue_turn`, `green_turn`, `white_turn`, `orange_turn` | an encoder's turn |
 | `keyboard` | the keyboard's note keys |
+| `fn_hold` | FN held alone, as the monitor and stock help use it (core 2.30) |
 
-`fn` and `help` are not inputs: FN (the help key) is the core's, used as a modifier. Shift is not an input either.
+`fn` and `help` are not inputs: FN (the help key) is the core's, used as a modifier; a plugin that acts on FN held
+alone declares `fn_hold` (core 2.30), so two such plugins never both draw over the page. Shift is not an input either.
 
 The words after the input, in any order, narrow the control:
 
@@ -245,8 +311,12 @@ changes one itself with `opus_set_setting` (api.md, Settings).
 - A choice: the choices parted by commas, no spaces, up to 95 characters in all; each choice 1 or more of `a-z`, `0-9`,
   `_`, `#`, `/`, `+` and `-` (so `c#` and `6/9` work); `DEFAULT` must be one of them. The plugin gets the index of the
   chosen one, 0 for the first.
-- `"label"`: in double quotes at the end of the line, up to 23 characters, shown on the settings page (empty: the name
-  shows). Write it in lower case.
+- `"label"`: in double quotes, up to 23 characters, shown on the settings page (empty: the name shows). Write it in
+  lower case.
+- ` if OTHER=VALUE` (optional, after the label; core 2.36): the settings page shows the row only while the setting
+  `OTHER`, on an earlier line, has `VALUE` (one of its choices, or a number in its range). Use it for a setting that
+  only means something in one mode. A hidden setting keeps its value, the plugin reads it as any other, and the user's
+  file keeps it. A core older than 2.36 shows every row, so declare `core 2.36` when the rows would confuse there.
 
 A new version of a plugin keeps the user's values that still fit: a name it no longer offers, or a value outside its
 new range, is dropped and the default used.
@@ -256,6 +326,9 @@ setting   depth 1 16 8 "depth"
 setting   curve linear,smooth,ease_out,ease_in linear "bend curve"
 setting   root c,c#,d,d#,e,f,f#,g,g#,a,a#,b c "root"
 setting   drive off,on off "always driving"
+setting   tap single,double single "tap"
+setting   hold 0 1000 300 "hold ms" if tap=single
+setting   interval 100 1000 350 "interval ms" if tap=double
 ```
 
 ## Themes
@@ -274,6 +347,29 @@ with only a manifest is enough (see [Code-free plugins](#code-free-plugins)).
 
 ```
 theme     halloween 9b30ff 7fff00 e3dac9 ff7518
+```
+
+### `recolour` (repeatable, up to 384; core 2.38)
+
+```
+recolour  NAME RRGGBB RRGGBB
+```
+
+Makes the theme `NAME` (a `theme` line earlier in the manifest) a **palette theme**: any stock colour of the OP-1's
+screens, the first colour, becomes the second, wherever it is: every stock screen, the OS's palette, text, the
+font's coloured icons and every plugin page drawn in stock colours. A theme's four colours move only the encoders'
+colours and their shades; a palette theme also reaches the whites, greys and dark colours, and its line for a colour
+comes before what the four colours would make of it. A line with the same colour twice keeps that colour as it is (a
+shade of an encoder's colour the theme's four colours would otherwise move). The lines count while the theme is the
+one the user picked in the colours row and its four colours are unchanged; when the user changes one, the colours
+are "custom" and the lines stop. A colour the screens draw from code, not from their drawings, stays as it is. The
+lines need `core 2.38`: an older core lists the theme with its four colours only.
+
+```
+theme     refined 00dbff 77ed90 f0f7ed ff423f
+recolour  refined ffffff f0f7ed
+recolour  refined 383572 422649
+recolour  refined ff90a7 ff90a7
 ```
 
 ## Places
@@ -334,13 +430,13 @@ cpu       user
 ```
 
 The only `cpu` line you write. It is for a manager: a plugin that runs effects the user chose (api.md, Managers). Its
-audio work is measured and shown but never switched off by the CPU budget: the user chose the effects and hears an
+audio work is measured and shown but never switched off by the CPU guard: the user chose the effects and hears an
 overload. Every other `cpu` line is the build's.
 
 The build writes a plugin's measured figure from `cpu.txt` in the plugin folder: a line `cycles N`, the plugin's worst
 audio block in CPU cycles (lines starting with `#` are comments). Without `cpu.txt` the build writes
-`cpu unmeasured`, and the core holds the plugin to a tenth of the audio block (58,052 cycles). A `cpu.txt` with no
-`cycles N` line is refused. How the CPU budget works: api.md, The CPU budget.
+`cpu unmeasured`, and the core measures the plugin against a tenth of the audio block (58,052 cycles). A `cpu.txt`
+with no `cycles N` line is refused. How the CPU budget works: api.md, The CPU budget.
 
 ## Notes for people
 
@@ -373,7 +469,7 @@ The build accepts these lines with any text, and the current core and build do n
 
 ## Lines the build writes
 
-The build adds these after a comment line of its own; they are in the `.opmod`, never in your `manifest.txt`. Writing
+The build adds these after your lines; they are in the `.opmod`, never in your `manifest.txt`. Writing
 one yourself is refused ("deep is written by the build"), except `cpu user`.
 
 | Line | Meaning |
@@ -382,7 +478,7 @@ one yourself is refused ("deep is written by the build"), except `cpu user`.
 | `ram image N zero N` | the bytes of its code and data, and of its zero-filled data |
 | `imports N` | how many names it imports (the names themselves are in the file) |
 | `cpu N` | its CPU figure: the cycles measured in `cpu.txt` |
-| `cpu unmeasured` | no `cpu.txt`: the core holds it to a tenth of the audio block |
+| `cpu unmeasured` | no `cpu.txt`: measured against a tenth of the audio block |
 | `cpu user` | your own line, kept: a manager |
 | `cpu 0` | a code-free plugin |
 
@@ -415,8 +511,10 @@ after it) and checks everything before any code runs. A refused plugin shows the
 | `fn is the core's: a uses line's modifier` | `fn` or `help` used as the input |
 | `a setting line`, `a setting line's numbers` | a `setting` line is malformed, or its numbers out of order |
 | `a setting line's default` | a choice's default is not one of its choices |
+| `a setting line's if` | an `if` names no setting on an earlier line, or a value it cannot have (core 2.36) |
 | `too many setting lines` | more than 12 |
 | `a theme line`, `too many theme lines` | a `theme` line is malformed, or there are more than 4 |
+| `a recolour line`, `a recolour line's theme`, `too many recolour lines` | a `recolour` line is malformed, names no `theme` line before it, or there are more than 384 (core 2.38) |
 | `damaged: ...` | the file is damaged (its checksum, an offset, a size) |
 | `needs core 2.6` | the plugin's `core` line is newer than the core |
 | `an older copy` | another file with the same id has a newer version |
@@ -424,7 +522,7 @@ after it) and checks everything before any code runs. A refused plugin shows the
 | `needs a plugin that needs it` | plugins needing each other in a loop |
 | `fn shift white turn is taken by NAME` | a control clashes with a loaded plugin's |
 | `needs NAME` | it calls a function the core does not have |
-| `not loaded: no room`, `not loaded: too many plugins` | no memory left, or 30 plugins already loaded |
+| `not loaded: no room`, `not loaded: no room for its part` | no memory left (there is no fixed count of plugins: memory and the CPU are the limits) |
 | `place NAME is taken` (and the other place messages) | see [Places](#places) |
 | `failed to start (-N)` | its `opl_init` returned -N |
 | `skipped: crashed` | it crashed the OP-1 last time; skipped until its file changes (developer mode loads it) |
@@ -487,17 +585,19 @@ opmod     1
 id        opus.outatime
 name      Outatime
 author    opus
-version   1.0.0
-core      2.4
+version   1.4.3
+core      2.21
+priority  high
 adds      engine outatime
 uses      blue_turn shift synth t1 "spread: the arms detune"
 uses      green_turn shift synth t1 "tone"
 uses      white_turn shift synth t1 "flux: the ensemble"
-uses      orange_turn shift synth t1 "nothing under shift"
+uses      orange_turn shift synth t1 "the overdrive type"
 setting   drive off,on off "always driving"
 ```
 
-`core 2.4` because it calls `opus_clock`. Its plain turns on T1 stay the OS's (they turn knobs 0-3); its engine's
+`core 2.21` because it leases fast memory for its wave tables (`opus_fast_lease`), and `priority high` so it keeps
+that memory when other plugins want it too (the clock it uses, `opus_clock`, came in 2.4). Its plain turns on T1 stay the OS's (they turn knobs 0-3); its engine's
 `turn` handler takes the shifted ones and sets its other knobs with `opus_engine_knob_set`, so it declares them, and
 no other plugin takes shift + an encoder on the synth's T1.
 

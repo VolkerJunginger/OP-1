@@ -7,34 +7,31 @@
 #include <string.h>
 #define PULSE_HOST_TEST
 #include "../pulsesync.c"
-volatile short test_input[64];
+static short test_input[64];
 volatile unsigned test_ring[1024], test_wr, test_rd, test_mode, test_input_mode, test_rx_phase, test_follow, test_fallback, test_com, test_input_source, test_edit_mode;
-static int enabled = 1, threshold = 5, polarity, mute_input=1, input_rate, autostart, priority;
+static int enabled = 1, threshold = 5, polarity, sync_input=SYNC_BOTH, input_rate, autostart, priority;
 static void (*block_cb)(void);
-static void (*mute_cb)(int,short *);
+static void (*line_cb)(int *, unsigned);
+void opus_on_line_input(struct opl_self *s, void (*f)(int *,unsigned)) { (void)s;line_cb=f; }
 static void (*frame_cb)(unsigned short *);
 static unsigned notices;
+static const char *last_notice;
 void opus_on_frame(struct opl_self *s, void (*f)(unsigned short *)) { (void)s;frame_cb=f; }
 void opus_page_text_right(struct opl_self *s,int slot,int x,int y,int size,int colour,const char *text) {
     (void)s;(void)slot;
-    assert(x==85 && y==118 && size==9 && colour==OPUS_COLOR_E1 && strcmp(text,"pulse sync")==0);
-    ++notices;
+    assert(x==85 && y==118 && size==9 && colour==OPUS_COLOR_E1);
+    ++notices;last_notice=text;
 }
-static unsigned skips;
-static unsigned original_calls;
-int orig_01967614(int a, int b, int c) { ++original_calls; assert(a==11 && b==22 && c==33); return 77; }
 int opus_setting(struct opl_self *s, const char *n) {
     (void)s;
     if (!strcmp(n, "input_rate")) return input_rate;
     if (!strcmp(n, "autostart")) return autostart;
     if (!strcmp(n, "priority")) return priority;
-    return !strcmp(n,"enabled") ? enabled : !strcmp(n,"threshold") ? threshold : !strcmp(n,"polarity") ? polarity : mute_input;
+    return !strcmp(n,"enabled") ? enabled : !strcmp(n,"threshold") ? threshold : !strcmp(n,"polarity") ? polarity : sync_input;
 }
 void opus_on_setting(struct opl_self *s, void (*f)(const char *,int)) { (void)s; (void)f; }
 void opus_on_block(struct opl_self *s, void (*f)(void)) { (void)s; block_cb=f; }
 void opus_on_panel(struct opl_self *s, void (*f)(void)) { (void)s; (void)f; }
-void opus_on_pre_fx(struct opl_self *s, void (*f)(int,short *)) { (void)s;mute_cb=f; }
-void opus_skip_dry_input(void) { ++skips; }
 void opus_cpu_charge(struct opl_self *s, unsigned n) { (void)s; (void)n; }
 void opus_panel_text(struct opl_self *s,int slot,int x,int y,int size,int colour,const char *t) {
     (void)s;(void)slot;(void)x;(void)y;(void)size;(void)colour;(void)t;
@@ -43,15 +40,15 @@ int fw_snprintf(char *b, unsigned n, const char *f, ...) { va_list a; va_start(a
 static void reset(void) {
     memset((void *)test_input,0,sizeof test_input);memset((void *)test_ring,0,sizeof test_ring);
     test_wr=test_rd=0;test_mode=2;test_input_mode=0;test_input_source=1;test_rx_phase=test_follow=test_com=0;test_fallback=1;sequence_blocks=0;
-    detected=sent=dropped=input_peak=input_blocks=0;consumed=previous_config=0;
-    enabled=1;threshold=5;polarity=0;mute_input=1;skips=0;pulse_reset(&detector);input_rate=0;autostart=priority=0;usb_seen=pulse_seen=pulse_period=transport_running=0;
+    detected=sent=dropped=input_peak=input_blocks=0;consumed=0;
+    enabled=1;threshold=5;polarity=0;sync_input=SYNC_BOTH;stereo_config=0;input_rate=0;autostart=priority=0;usb_seen=pulse_seen=pulse_period=transport_running=0;
     selected_source=SOURCE_NONE;test_cycles=0;clock_rate=0;reset_conversion();settings(0,0);
 }
-static void render(void) { short sound[64];
-    for(unsigned i=0;i<64;i++)sound[i]=(short)(i*29-500);
-    mute_cb(0,sound);
-    for(unsigned i=0;i<64;i++)assert(sound[i]==(short)(i*29-500));
-    assert(pulse_input(11,22,33)==77);block_cb();
+static void render(void) {
+    int raw[128] = {0};
+    for(unsigned i=0;i<64;i++)raw[2*i]=(int)test_input[i]*65536;
+    line_cb(raw,64);
+    block_cb();
 }
 static void drain(void) {
     while(test_rd!=test_wr) { assert(test_ring[test_rd&1023u]==(MIDI_TAG | 0xf80fu));test_rd++; }
@@ -329,7 +326,7 @@ int main(void) {
     assert(ticks==1);
     /* Disabled and non-sync modes never inject; nonzero input flag does not block line input. */
     reset();enabled=0;settings(0,0);test_input[1]=10000;render();assert(sent==0 && detected==0);
-    enabled=1;settings(0,0);test_mode=0;render();assert(detected==1 && sent==0);
+    enabled=1;settings(0,0);test_mode=0;render();assert(detected==0 && sent==0);
     test_mode=2;block_cb();assert(sent==0); /* no backlog on entering Sync */
     reset();test_input_mode=1;test_input[2]=10000;render();assert(sent==1 && input_peak==10000);
     /* Full/invalid ring: leave data and both counters alone. */
@@ -347,29 +344,55 @@ int main(void) {
         reset();threshold=(int)th;polarity=1;settings(0,0);test_input[2]=-32768;render();
         assert(detected==1 && input_peak==32768);
     }
-    /* Mute policy: active sync only, no edits to capture/audio, either instrument. */
-    reset();short sound[64];for(unsigned i=0;i<64;i++)sound[i]=(short)(i*31-300);
-    test_input[3]=12345;mute_cb(1,sound);assert(skips==1 && test_input[3]==12345);
-    for(unsigned i=0;i<64;i++)assert(sound[i]==(short)(i*31-300));
-    mute_input=0;settings(0,0);mute_cb(0,sound);assert(skips==1);
-    mute_input=1;enabled=0;settings(0,0);mute_cb(0,sound);assert(skips==1);
-    enabled=1;settings(0,0);test_mode=0;mute_cb(0,sound);assert(skips==1);
-    test_mode=4;mute_cb(0,sound);assert(skips==2);
-    for (unsigned source=0;source<=4;++source) {
-        reset();test_input_source=source;test_input_mode=2;
-        mute_cb(0,sound);assert(skips==0);
-        test_input_mode=0;
-        mute_cb(0,sound);assert(skips==(source==1));
+    /* Clock removal happens in the same block and preserves the other side. */
+    for (unsigned mask=1;mask<=3;++mask) {
+        reset();int raw[128]={0};
+        sync_input=mask==3?SYNC_BOTH:mask==1?SYNC_LEFT:SYNC_RIGHT;settings(0,0);
+        raw[126]=(mask&1)?10000*65536:200*65536;
+        raw[127]=(mask&2)?10000*65536:300*65536;
+        int left=raw[126],right=raw[127];
+        line_cb(raw,64);
+        assert(detected==1);
+        assert(raw[126]==((mask&1)?0:left));
+        assert(raw[127]==((mask&2)?0:right));
+        test_edit_mode=5;notices=0;frame_cb(0);
+        const char *labels[]={"","sync l","sync r","sync l+r"};
+        assert(notices==1 && !strcmp(last_notice,labels[mask]));
+        test_edit_mode=2;frame_cb(0);assert(notices==1);
+        enabled=0;settings(0,0);raw[126]=left;raw[127]=right;line_cb(raw,64);assert(raw[126]==left && raw[127]==right);
     }
-    reset();test_input_mode=2;notices=0;
-    test_edit_mode=2;frame_cb(0);assert(notices==0);
-    test_edit_mode=5;test_input_source=0;frame_cb(0);assert(notices==0);
-    test_input_source=1;mute_input=0;settings(0,0);frame_cb(0);assert(notices==0);
-    mute_input=1;settings(0,0);frame_cb(0);assert(notices==1);
-    /* Toggling mute must not reset an already-high detector and invent a tick. */
+    reset();
+    int idle_audio[128] = {0};
+    idle_audio[126] = 100 * 65536;
+    idle_audio[127] = 200 * 65536;
+    line_cb(idle_audio,64);assert(idle_audio[126]==0 && idle_audio[127]==0);
+    sync_input=SYNC_BOTH;settings(0,0);
+    line_cb(idle_audio,64);
+    assert(idle_audio[126]==0 && idle_audio[127]==0);
+    idle_audio[126]=10000*65536;
+    line_cb(idle_audio,64);
+    assert(idle_audio[126]==0 && idle_audio[127]==0 && detected==1);
+    reset();
+    sync_input=SYNC_LEFT;settings(0,0);
+    idle_audio[126]=100*65536;idle_audio[127]=200*65536;
+    line_cb(idle_audio,64);
+    assert(idle_audio[126]==0 && idle_audio[127]==200*65536);
+    sync_input=SYNC_RIGHT;settings(0,0);
+    idle_audio[126]=100*65536;
+    line_cb(idle_audio,64);
+    assert(idle_audio[126]==100*65536 && idle_audio[127]==0);
+    /* Re-selecting the same input must not invent a tick. */
     reset();test_input[1]=10000;render();unsigned before=detected;
-    mute_input=0;settings(0,0);render();assert(detected==before);
+    settings(0,0);render();assert(detected==before);
+    reset();test_edit_mode=5;notices=0;
+    const char *manual_labels[]={"sync l+r","sync l","sync r"};
+    for (int choice=SYNC_BOTH;choice<=SYNC_RIGHT;++choice) {
+        sync_input=choice;settings(0,0);frame_cb(0);
+        assert(!strcmp(last_notice,manual_labels[choice]));
+    }
+    sync_input=3;settings(0,0);frame_cb(0);
+    assert(notices==4 && !strcmp(last_notice,"sync l+r"));
     transport_tests();
-    reset();panel();assert(original_calls>0);
-    puts("PASS: 36 noisy 24/48/96-PPQ streams and all four sparse rates (60/120/300 BPM, both rates/polarities), held gates, ringing, stale buffers, enable/sync modes and nonzero-input-flag regression, queue bounds/rollover, stale bursts, extremes, original-call forwarding, mute policy, audio/capture preservation, mute toggle continuity, threshold mapping, AutoStart/Stop and clock-source arbitration.");
+    reset();panel();
+    puts("PASS: 36 noisy 24/48/96-PPQ streams and all four sparse rates (60/120/300 BPM, both rates/polarities), held gates, ringing, stale buffers, enable/sync modes and line input gating, queue bounds/rollover, stale bursts, extremes, same-block stereo split, label routing, mute toggle continuity, threshold mapping, AutoStart/Stop and clock-source arbitration.");
 }

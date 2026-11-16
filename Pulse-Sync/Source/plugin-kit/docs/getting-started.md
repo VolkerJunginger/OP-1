@@ -7,7 +7,19 @@ From nothing to your own plugin running on the OP-1. You need:
 - the **Blackfin compiler**: GCC and binutils for `bfin-elf`, the OP-1's processor (an Analog Devices BF524). The
   kit builds it from GNU's own sources (below).
 
-## 1. The Blackfin compiler
+## 1. The Blackfin compiler (once per computer)
+
+**Check first:**
+
+```
+python plugin_tool.py doctor
+```
+
+If it says `READY`, skip to section 2: the compiler is already set up on this computer. If it says `NOT READY` but
+lists a compiler elsewhere (beside another copy of the kit), point the kit at that one with the command it prints.
+The compiler is built once per computer and serves every plugin you ever make: a new plugin is a new folder in this
+kit (`plugin_tool.py new`, section 2), never a new copy of the kit and never a new compiler. Only a computer that
+never had one builds it, as below; run again, the script keeps what it already built (`FORCE=1` builds it anew).
 
 `tools/toolchain/build-bfin-toolchain.sh` downloads binutils 2.38 and GCC 13.3.0 from ftp.gnu.org, checks their
 signatures against the GNU keyring, and builds a C compiler for `bfin-elf`. It runs on Ubuntu (or Debian) and takes
@@ -80,10 +92,11 @@ python plugin_tool.py show build/hello.opmod
 
 1. **Developer mode** (once): open Opus's menu (hold **synth + drum + tape + mixer** together), **T1** for the
    system settings, and switch **developer mode** on. While it is on, a plugin that crashes is not left out at the
-   next start and one that uses too much CPU is not switched off, so you see what yours really does. Switch it off
-   when you are done.
-2. **Disk mode:** press **COM**, then **T1**, and connect the OP-1. Copy `build/hello.opmod` into the disk's
-   **mods** folder, eject the disk, and switch the OP-1 off and on.
+   next start and one that uses too much CPU is not switched off, so you see what yours really does; and the OP-1
+   restarts by itself after a disk mode that changed the mods folder (core 2.53). Switch it off when you are done.
+2. **Disk mode:** press **shift + COM**, then **T3**, and connect the OP-1. Copy `build/hello.opmod` into the disk's
+   **mods** folder and eject the disk. In developer mode the OP-1 then says "new plugins: restarting" and restarts
+   with your plugin; otherwise switch it off and on.
 3. **The mods list:** the menu again, then **T2**. Turn **blue** to your plugin's row: it says "loaded", or why not
    ("needs opus_something": it calls a name this core does not have; "not loaded: no room": out of memory). Push
    **blue** for its settings, **green** for its controls, **orange** for its details (its memory, its worst audio
@@ -92,10 +105,18 @@ python plugin_tool.py show build/hello.opmod
 The hello plugin draws its level on the right of the mods list while its row is selected; turn green to change it.
 
 **If something goes wrong:** a plugin that crashes the OP-1 is left out at the next start ("skipped: crashed";
-outside developer mode), and a new file or a **white** push on its row tries it again. Holding **Stop** while
-switching the OP-1 on starts it with no plugins at all; then delete the plugin from the mods folder in disk mode.
+outside developer mode) and shows as off; a new file, or turning **orange** on its row to switch it on again, tries
+it again. Holding **Stop** while switching the OP-1 on starts it with no plugins at all; then delete the plugin from
+the mods folder in disk mode.
 Nothing a plugin does can touch te-boot, the OP-1's update and recovery mode: you can always install Opus again
 (hold **COM** while switching on).
+
+**Reading a crash:** after a crash, the next start writes a crash log, and disk mode shows it in the **logs** folder
+on the USB disk (`/logs/N.txt`, the last eight; delete one there and it is gone from the OP-1 too). Its first lines
+say what stopped the OP-1 (the OS's assert, or the processor's exception) and which plugins were loaded; the rest is
+the whole record. `python tools/crashlog.py N.txt` reads it: every address in a plugin shows as `id+offset`, and
+`--plugin ID=build/NAME.build/plugin_0.elf` (your build's linked file) names your plugin's functions there. Attach the
+log when you report a crash.
 
 ## 4. Learn from the examples
 

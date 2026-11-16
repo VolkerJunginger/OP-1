@@ -1,16 +1,13 @@
-/* Pulse Sync 1.0.7, GPL-3.0-or-later. R246 only; see FIRMWARE.md. */
+/* Pulse Sync 1.1.9, GPL-3.0-or-later. R246 only; see FIRMWARE.md. */
 #include "opus_plugin.h"
 #include "op1fw.h"
 #include "pulse_core.h"
 #ifdef PULSE_HOST_TEST
-extern volatile short test_input[64];
 extern volatile unsigned test_ring[1024], test_wr, test_rd, test_mode, test_input_mode, test_rx_phase, test_follow, test_fallback, test_com, test_input_source, test_edit_mode;
-#define INPUT test_input
 #define RING test_ring
 #define WR test_wr
 #define RD test_rd
 #define MODE test_mode
-#define INPUT_MODE test_input_mode
 #define INPUT_SOURCE test_input_source
 #define EDIT_MODE test_edit_mode
 #define RX_PHASE test_rx_phase
@@ -23,13 +20,11 @@ static unsigned irq_off(void) { return 0; }
 static void irq_restore(unsigned mask) { (void)mask; }
 static void publish(void) { }
 #else
-#define INPUT ((volatile const short *)0xff800cb4u)
 #define RING ((volatile unsigned *)0x01ab0510u)
 #define WR (*(volatile unsigned *)0x01ab1510u)
 #define RD (*(volatile unsigned *)0x01ab1514u)
 #define MODE (*(volatile const unsigned *)0x018c1870u)
-#define INPUT_MODE (*(volatile const unsigned *)0xff8010b0u)
-#define INPUT_SOURCE (*(volatile const unsigned *)0x01dd4d50u)
+#define INPUT_SOURCE (*(volatile const unsigned *)0xff8010b4u)
 #define EDIT_MODE (*(volatile const unsigned *)0xff907d58u)
 #define RX_PHASE (*(volatile const unsigned *)0x018b6010u)
 #define FOLLOW (*(volatile const unsigned char *)0x018c1898u)
@@ -41,15 +36,16 @@ static void irq_restore(unsigned n) { __asm__ volatile("sti %0;" : : "d"(n) : "m
 static void publish(void) { __asm__ volatile("ssync;" : : : "memory"); }
 #endif
 static struct opl_self *me;
-static struct pulse_detector detector;
 /* A single packed word is published by the key thread. */
 static volatile unsigned config;
 static volatile unsigned detected, input_peak, input_blocks, sent, dropped;
-static unsigned consumed, previous_config;
+static unsigned consumed;
 static volatile unsigned sequence_blocks;
 
+#define SYNC_INPUT_SHIFT 24u
+enum { SYNC_BOTH, SYNC_LEFT, SYNC_RIGHT };
 #define RATE_SHIFT 19u
-#define DETECTOR_CONFIG 0x3bffffu /* Threshold, enable, polarity and rate. */
+#define DETECTOR_CONFIG 0x033bffffu /* Threshold, enable, polarity, rate and input selection. */
 #define AUTOSTART (1u << 22)
 #define PULSE_PRIORITY (1u << 23)
 #define RATE_MASK 7u
@@ -213,63 +209,96 @@ static void settings(const char *name, int value)
     unsigned threshold = threshold_levels[level - 1];
     unsigned enabled = (unsigned)opus_setting(me, "enabled");
     unsigned negative = (unsigned)opus_setting(me, "polarity");
-    unsigned mute = (unsigned)opus_setting(me, "mute_input");
+    unsigned sync_input = (unsigned)opus_setting(me, "sync_input");
     unsigned rate = (unsigned)opus_setting(me, "input_rate");
     if (rate > CLOCK_THIRTYSECOND) rate = PPQ24;
     unsigned automatic = (unsigned)opus_setting(me, "autostart");
     unsigned priority = (unsigned)opus_setting(me, "priority");
     (void)name; (void)value;
-    config = threshold | (enabled << 16) | (negative << 17) | (mute << 18) | (rate << RATE_SHIFT) | (automatic << 22) | (priority << 23);
+    if (sync_input > SYNC_RIGHT) sync_input = SYNC_BOTH;
+    config = threshold | (enabled << 16) | (negative << 17) | (sync_input << SYNC_INPUT_SHIFT) | (rate << RATE_SHIFT) | (automatic << 22) | (priority << 23);
 }
 /* The kit generates the checked trampoline for this name. */
-int orig_01967614(int a, int b, int c);
-int pulse_input(int a, int b, int c)
+/* Opus supplies 64 writable interleaved stereo frames.
+ * Edits feed the stock monitor and capture paths for this block. */
+static struct pulse_detector stereo_edges[2];
+static unsigned channel_age[2];
+static unsigned stereo_config;
+
+
+static void route_line_input(int *input, unsigned frames)
 {
-    int result = orig_01967614(a, b, c);
-    unsigned start = cycles(), cfg = config, peak = 0, ticks = 0;
+    unsigned cfg = config;
+    unsigned mode = MODE;
+    if (!input || frames != 64 ||
+        !(cfg & (1u << 16)) || (mode != 2 && mode != 4)) {
+        stereo_config = 0;
+        return;
+    }
+
     unsigned rate = (cfg >> RATE_SHIFT) & RATE_MASK;
     unsigned blank = rate <= PPQ96 ? 88u >> rate : 88u;
-    ++input_blocks;
-    if ((cfg & DETECTOR_CONFIG) != previous_config) {
-        pulse_reset(&detector); previous_config = cfg & DETECTOR_CONFIG;
-    }
-    {
-        for (unsigned i = 0; i < 64; ++i) {
-            int sample = INPUT[i];
-            unsigned magnitude = (unsigned)(sample < 0 ? -sample : sample);
-            if (magnitude > peak) peak = magnitude;
-            if (cfg & (1u << 16))
-                ticks += pulse_sample(&detector, sample, cfg & 65535u, (cfg >> 17) & 1u, blank);
+    unsigned threshold = cfg & 65535u;
+    unsigned negative = (cfg >> 17) & 1u;
+    if (stereo_config != (cfg & DETECTOR_CONFIG)) {
+        for (unsigned ch = 0; ch < 2; ++ch) {
+            pulse_reset(&stereo_edges[ch]);
+            channel_age[ch] = 0;
         }
-    } /* Source is selected by the user: no unverified mode interpretation. */
+        stereo_config = cfg & DETECTOR_CONFIG;
+    }
+
+    unsigned selection = (cfg >> SYNC_INPUT_SHIFT) & 3u;
+    unsigned selected_channels = selection == SYNC_LEFT ? 1u :
+                                 selection == SYNC_RIGHT ? 2u : 3u;
+    unsigned edges[2] = {0, 0}, peak = 0;
+    for (unsigned i = 0; i < 64; ++i) {
+        for (unsigned ch = 0; ch < 2; ++ch) {
+            if (!(selected_channels & (1u << ch))) continue;
+            int sample = input[2*i + ch] >> 16;
+            unsigned level = (unsigned)(sample < 0 ? -sample : sample);
+            if (level > peak) peak = level;
+            edges[ch] += pulse_sample(&stereo_edges[ch], sample, threshold, negative, blank);
+        }
+    }
+
+    for (unsigned ch = 0; ch < 2; ++ch) {
+        if (edges[ch]) {
+            channel_age[ch] = 2757; /* Four seconds at 44.1 kHz, 64 frames/block. */
+        } else if (channel_age[ch]) {
+            --channel_age[ch];
+        }
+    }
+
+    unsigned channels = (channel_age[0] != 0) | ((channel_age[1] != 0) << 1);
     input_peak = peak;
-    detected += ticks;
-    opus_cpu_charge(me, cycles() - start);
-    return result;
-}
-/* Stock mic/line control uses mode 0 for external input and 2 for off.
- * Its source enum is separate: 0 mic, 1 line, 2 USB, 3 radio, 4 resample. */
-static int line_monitor_muted(unsigned cfg, unsigned mode)
-{
-    return (cfg & 0x50000u) == 0x50000u && (mode == 2 || mode == 4) &&
-           INPUT_MODE == 0 && INPUT_SOURCE == 1;
-}
+    ++input_blocks;
+    /* Use a single clock when both sides carry edges, to avoid duplicate ticks. */
+    detected += channels & 1u ? edges[0] : edges[1];
 
-static void mute_clock_input(int instrument, short *buf)
-{
-    (void)instrument; (void)buf;
-    if (line_monitor_muted(config, MODE))
-        opus_skip_dry_input();
+    for (unsigned i = 0; i < frames; ++i) {
+        if (selected_channels & 1u) input[2*i] = 0;
+        if (selected_channels & 2u) input[2*i+1] = 0;
+    }
 }
-
 /* Shift + Mic enters stock edit mode 5. The banner tracks the selection
  * even with input off, so the user can see what will happen when enabled. */
 static void draw_mute_notice(unsigned short *buf)
 {
     (void)buf;
-    if (EDIT_MODE == 5 && INPUT_SOURCE == 1 && (config & 0x50000u) == 0x50000u)
-        opus_page_text_right(me, 0, 85, 118, 9, OPUS_COLOR_E1, "pulse sync");
+    static const char *const labels[] = {"", "sync l", "sync r", "sync l+r"};
+    unsigned cfg = config;
+    if (EDIT_MODE != 5 || INPUT_SOURCE != 1 || !(cfg & (1u << 16)))
+        return;
+
+    unsigned selection = (cfg >> SYNC_INPUT_SHIFT) & 3u;
+    static const unsigned manual_channels[] = {3, 1, 2};
+    unsigned channels = manual_channels[selection];
+    if (channels)
+        opus_page_text_right(me, 0, 85, 118, 9, OPUS_COLOR_E1, labels[channels]);
+
 }
+
 /* Sequencer thread, before the normal stock MIDI drain. */
 static void block(void)
 {
@@ -381,7 +410,7 @@ int opl_init(struct opl_self *self)
     clock_rate = (config >> RATE_SHIFT) & RATE_MASK;
     opus_on_setting(self, settings);
     opus_on_block(self, block);
-    opus_on_pre_fx(self, mute_clock_input);
+    opus_on_line_input(self, route_line_input);
     opus_on_panel(self, panel);
     opus_on_frame(self, draw_mute_notice);
     return 0;

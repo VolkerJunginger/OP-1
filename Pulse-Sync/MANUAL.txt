@@ -1,41 +1,17 @@
-PULSE SYNC 1.0.7
-Original OP-1 with Opus 2 on firmware #246
+Pulse Sync 1.1.9
+Original OP-1 firmware #246 with Opus core 2.58 or newer.
 
-Replace pulsesync.opmod in mods, eject and restart.
-Select line in, keep input active and choose Sync on the tempo screen.
-Feed a line-level pulse signal. Attenuate modular CV before connecting it.
+Copy pulsesync.opmod to mods, eject and restart. Select Line In and set
+the OP-1 tempo to Sync. Feed line-level clock pulses. Attenuate modular CV.
 
-SETTINGS
-Opus menu > T2 > Pulse Sync > blue push
+Open Pulse Sync settings with a blue push on its row in the Opus mods list.
+Select Sync Input: L+R (default), L or R. Pulse Sync listens to and mutes
+the selected channel(s). In L or R, the other channel remains available
+for audio. Turn Pulse Sync Off to pass both channels. Shift + Mic shows
+the selected sync input in blue.
 
-Pulse Threshold 1–10 (default 5)
-1 detects weaker signals. 10 requires stronger signals.
-Raise it for false ticks; lower it for missed pulses.
-The old raw threshold setting resets to 5 when upgrading.
-
-AutoStart off/on (default off)
-On sends MIDI Start with the first selected pulse.
-When pulse clock stops, it sends MIDI Stop after two expected pulse
-intervals, with a minimum wait of 100 ms and a maximum of 4 seconds.
-After a single pulse, the acquisition timeout is 4 seconds.
-Off gives manual play/stop.
-
-Clock Priority USB/Pulse (default USB)
-Chooses the preferred source while both clocks are active.
-Falls back to the other source when the preferred clock disappears.
-USB clock is considered absent after 500 ms.
-USB timing/transport messages are ignored while pulse clock is selected.
-USB takes responsibility for transport when it becomes the selected source.
-AutoStart/AutoStop applies while pulse clock controls playback.
-
-Input Rate
-24ppq (default), 48ppq, 96ppq, 1/4, 1/8, 1/16 or 1/32.
-All settings feed 24 PPQ MIDI clock to the OP-1.
-Note divisions need two pulses to measure the interval.
-
-Mute Clock Input defaults to on and mutes only Line In in Sync mode.
-On Shift + Mic, a small blue Pulse Sync label shows that mute is enabled
-for the selected Line In source. Pulse Polarity selects positive/negative.
-The panel displays USB, pulse or waiting for the selected clock source.
-
-The owner confirmed on an original OP-1 that 1.0.1 restores pulse tempo lock after USB MIDI use. The firmware signature checks and host tests passed. Automatic transport, simultaneous clock sources and CPU load still await hardware testing.
+Set Input Rate to 24, 48 or 96 PPQ, or 1/4, 1/8, 1/16 or 1/32.
+Pulse Threshold is 1–10. Higher settings require stronger pulses.
+Pulse Polarity selects positive or negative edges.
+AutoStart optionally starts and stops playback with the pulse clock.
+Clock Priority selects the preferred source when USB and Pulse are active.

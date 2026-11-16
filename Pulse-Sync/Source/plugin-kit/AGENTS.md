@@ -21,18 +21,27 @@ run the OP-1, they can. So:
 
 ## The kit
 
-- `plugin_tool.py new AUTHOR.NAME` makes a working plugin folder in `plugins/`; `build DIR` writes
+- `plugin_tool.py doctor` says whether this computer can build plugins (Python, and where the compiler is);
+  `new AUTHOR.NAME` makes a working plugin folder in `plugins/`; `build DIR` writes
   `build/NAME.opmod`; `show FILE.opmod` reads it back as the core will; `svg FILE.svg` checks page art against what
   the OP-1's own SVG parser draws (run it on every SVG a plugin ships). A failure prints `REFUSED:` and why.
 - `docs/getting-started.md` (the compiler, the device steps), `docs/rules.md` (the rules below in full),
   `docs/api.md` (every `opus_*` call), `docs/manifest.md` (every manifest line), `docs/sharing.md` (the checks).
-- `sdk/opus_plugin.h` (the core's calls) and `sdk/op1fw.h` (the firmware's own functions, `fw_*`).
+- `sdk/opus_plugin.h` (the core's calls), `sdk/op1fw.h` (the firmware's own functions, `fw_*`) and `sdk/orbit3d.h`
+  (the orbit3d library's 3D drawing, `o3_*`, for a plugin with `needs opus.orbit3d`: `docs/orbit3d.md`).
 - `examples/`: four real plugins from Opus 2's starter pack: `opus.halloween` (a theme, no code), `opus.zoom` (a
   tape tool), `opus.bitcrush` (an effect with its own page), `opus.outatime` (a synth engine whose page is an SVG
-  design with live instruments drawn over it: the way to build a designed screen). Start from the closest one or from
-  `new`.
+  design with live instruments drawn over it: the way to build a designed screen); and `opus.globe`, a quick page
+  drawn in 3D with orbit3d (the way to draw 3D line art). Start from the closest one or from `new`.
 
 ## How to work
+
+**First, in every session: `python plugin_tool.py doctor`.** The Blackfin compiler is set up **once per computer**,
+never for each plugin. If doctor says `READY`, the compiler is there: never run
+`tools/toolchain/build-bfin-toolchain.sh`. If it says `NOT READY` but lists a compiler elsewhere on the computer
+(beside another copy of the kit), point the kit at that one: doctor prints the command. Build the compiler only on a
+computer that never had one, once, and tell the person first that it is a long build (`docs/getting-started.md`,
+section 1). A new plugin is a new folder in this same kit (`plugin_tool.py new`), never a new copy of the kit.
 
 1. **Pin the plugin down first.** What kind is it (an effect, a synth engine, a page, a tool on a key or encoder, a
    theme)? Which core services does it need? Find each call in `docs/api.md` before you plan around it. If what they
@@ -42,14 +51,18 @@ run the OP-1, they can. So:
 3. **Build after every change** (`python plugin_tool.py build plugins/ID`). Warnings are errors; fix the cause,
    never silence it.
 4. **Hand it to the person with exact steps:** developer mode on (Opus's menu: synth + drum + tape + mixer, T1),
-   disk mode (COM, then T1), copy the `.opmod` into the disk's mods folder, eject, restart, the mods list (the menu,
-   T2): its row says "loaded" or why not. Then what to press and what to listen for.
+   disk mode (shift + COM, then T3), copy the `.opmod` into the disk's mods folder, eject (in developer mode the
+   OP-1 then restarts by itself, core 2.53; otherwise switch it off and on), the mods list
+   (the menu, T2): its row says "loaded" or why not. Then what to press and what to listen for.
 5. **Ask what they saw and heard**, and fix from that. If the OP-1 crashed: the next start leaves the plugin out
-   ("skipped: crashed") unless developer mode is on; holding Stop while switching on starts with no plugins.
+   ("skipped: crashed") unless developer mode is on; holding Stop while switching on starts with no plugins. Ask
+   for the crash log (disk mode, the `logs` folder, `N.txt`) and read it with `python tools/crashlog.py N.txt
+   --plugin ID=build/NAME.build/plugin_0.elf`: the plugin's addresses show as its function and offset.
 6. **Its CPU figure** (any plugin with audio code): have them play the heaviest case (all voices, chords, its
    heaviest settings) with developer mode on, then read "audio: worst N" in its details (orange push on its row in
    the mods list), and write `cycles N` into the plugin folder's `cpu.txt` (see `examples/opus.bitcrush/cpu.txt`).
-   The build writes it into the manifest; without it the core holds the plugin to a tenth of the audio block.
+   The build writes it into the manifest; without it the core measures the plugin against a tenth of the audio block.
+   Going over the figure is shown, not punished: late blocks (clicks) are what the core acts on (docs/api.md).
 7. **Record what was tested:** a `checked device DATE what was played` line in `manifest.txt`, only after they
    confirmed it on their OP-1.
 
