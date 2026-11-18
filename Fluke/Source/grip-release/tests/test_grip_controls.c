@@ -83,6 +83,8 @@ static void check_labels(int sc, int hold_label)
     assert(sc_labels == sc && hold_labels == hold_label);
 }
 
+void opus_key_timer(struct opl_self *self, unsigned ms, void (*fn)(void))
+{ (void)self; assert(ms == 120); fn(); }
 int main(void)
 {
     shown = (struct opus_page){.kind = OPUS_PAGE_EFFECT, .t = 3, .where = OPUS_FX_DRUM,

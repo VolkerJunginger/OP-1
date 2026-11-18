@@ -1,5 +1,9 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "opus_plugin.h"
+#include "encoder_speed.h"
+static struct encoder_speed reverb_speed;
+static void reverb_expire(void) { reverb_speed.burst = 0; }
+
 #include "op1fw.h"
 #include "dsp.h"
 #include "screen_data.h"
@@ -154,6 +158,8 @@ static int page_key(struct opus_page *pg,int code,int pressed)
     }
     return 1;
 }
+static struct opl_self *encoder_plugin;
+
 static int page_turn(struct opus_page *pg,int encoder,int detents)
 {
     short par[8];
@@ -163,6 +169,8 @@ static int page_turn(struct opus_page *pg,int encoder,int detents)
     int max=word ? 100 : (int)banks[bank].programs-1;
     if (detents<-100) detents=-100;
     if (detents>100) detents=100;
+    if (word) detents=encoder_speed_turn(&reverb_speed, encoder_plugin, reverb_expire, pg->par, (int)word+4*(int)bank, detents);
+    else reverb_expire();
     int value=(int)decode((int)word,par[word],bank)+detents;
     if (value<0) value=0;
     if (value>max) value=max;
@@ -314,6 +322,7 @@ static struct opus_effect effect={
 };
 int opl_init(struct opl_self *self)
 {
+    encoder_plugin=self;
     unsigned n=0;
     while(self->folder[n] && n<sizeof screen_path-sizeof "/screen.svg") {screen_path[n]=self->folder[n];++n;}
     if(self->folder[n]) return -1;

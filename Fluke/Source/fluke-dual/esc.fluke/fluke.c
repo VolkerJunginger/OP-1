@@ -2,6 +2,11 @@
 #include "opus_plugin.h"
 #include "op1fw.h"
 #include "core.h"
+#include "../../grip-release/Hits/encoder_speed.h"
+static struct encoder_speed fluke_speed;
+static void fluke_expire(void) { fluke_speed.burst = 0; }
+
+static struct opl_self *encoder_plugin;
 #include "drum.h"
 #include "art.h"
 #include "../../grip-release/Hits/fluke_link.h"
@@ -392,6 +397,8 @@ static int turn(int m,int enc,int delta){
  /* OS native turns use Q10; four units per detent, as existing sequencer adapters. */
  *a+=delta;int n=*a/4096;*a-=n*4096;if(!n)return 1;
  int k=map[pg][lane];if(!pg&&lane==1&&pattern.p[RHYTHM])k=PULSES;
+ if(k==RATE||k==TYPE||k==DIRECTION)fluke_expire();
+ else n=encoder_speed_turn(&fluke_speed, encoder_plugin, fluke_expire, current_pattern, k, n);
  if(k==RATE)n=-n;
  int maximum=k==PULSES?pattern.p[LENGTH]:hi[k];
  int v=bounded(pattern.p[k]+n,lo[k],maximum);
@@ -616,6 +623,7 @@ static void connect_visible_hits(void)
 }
 
 int opl_init(struct opl_self *self){
+ encoder_plugin=self;
  host_sync_init();
  layout_owner=self;layout_header_ready=0;opus_on_frame(self,layout_header_frame);
  opus_on_key(self,transport_before);opus_on_key_after(self,transport_after);

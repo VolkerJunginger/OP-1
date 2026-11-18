@@ -7,7 +7,7 @@
 #include "bubbler_dsp.h"
 #include "bubbler_art.h"
 #include "instrument_only.h"
-struct native_ui { int extra_page[1],res_edit[1],arrow_taken[2],push_taken,transpose; };
+struct native_ui { int extra_page[1],res_edit[1],push_taken,transpose; };
 struct native_bulk { const void *owner; short ring[BB_STORAGE]; };
 struct native_instance { struct bb_state dsp; struct native_ui ui; unsigned magic; };
 static struct opus_effect native_effect;
@@ -22,7 +22,6 @@ static struct native_ui *page_ui(void) {
 }
 #define extra_page (page_ui()->extra_page)
 #define res_edit (page_ui()->res_edit)
-#define arrow_taken (page_ui()->arrow_taken)
 #define push_taken (page_ui()->push_taken)
 #define transpose (page_ui()->transpose)
 static int clamp(int v, int lo, int hi) {
@@ -83,20 +82,6 @@ static int key(int code,int pressed)
     viewed_owner==owner_now() && frame_number-viewed_frame<=1u) {
         res_edit[owner_now()]=!res_edit[owner_now()];
         push_taken=1;
-        return 1;
-    }
-    int arrow=code==0x24?0:code==0x25?1:-1;
-    if(arrow>=0 && !pressed && arrow_taken[arrow]) {
-        arrow_taken[arrow]=0;
-        return 1;
-        /* pair even if Shift was released first */
-    }
-    if(owner_now()!=16 && arrow>=0 && pressed && !opus_fn_held() && fw_shift_held() &&
-    1 &&
-    viewed_owner==owner_now() && frame_number-viewed_frame<=1u) {
-        int owner=owner_now();
-        extra_page[owner]=clamp(extra_page[owner]+(arrow?1:-1),0,1);
-        arrow_taken[arrow]=1;
         return 1;
     }
     /* Invalidate the last-view token immediately on navigation. Other effects
@@ -238,7 +223,6 @@ static const struct opus_effect BUBBLER = {
 
 #undef extra_page
 #undef res_edit
-#undef arrow_taken
 #undef push_taken
 #undef transpose
 

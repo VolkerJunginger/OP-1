@@ -271,6 +271,9 @@ static void drum_turn(int enc,int delta,int shifted){
  int lane=enc&3,pg=drum_run.edit>=0&&(enc>=4||shifted);int *a=&drum_turn_acc[pg*4+lane];
  if((*a>0&&delta<0)||(*a<0&&delta>0))*a=0;
  *a+=delta;int n=*a/4096;*a-=n*4096;if(!n)return;
+ int parameter=drum_run.edit<0 && lane==3 ? DS_SWING : drum_parameter(drum_run.edit<0 ? &drums.master : &drums.lanes[drum_run.edit],pg,lane);
+ if(parameter==DS_STYLE||parameter==DS_DIRECTION||parameter==DS_RATE)fluke_expire();
+ else n=encoder_speed_turn(&fluke_speed, encoder_plugin, fluke_expire, &drums, 32+(drum_run.edit+1)*DS_PARAMS+parameter, n);
  if(drum_run.edit>=0){drum_adjust(&drums.lanes[drum_run.edit],pg,lane,n);drum_weight_reset();}
  else {
   if(lane==3){drums.master.p[DS_SWING]=bounded(drums.master.p[DS_SWING]+n,0,100);return;}

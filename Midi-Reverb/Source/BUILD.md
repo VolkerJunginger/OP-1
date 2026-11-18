@@ -1,4 +1,4 @@
-# Rebuild Midi-Reverb 1.0.0
+# Rebuild Midi-Reverb 1.0.1
 
 Uses the existing Opus plugin kit at commit e47b95fce500c470447eae1ca31a638c67b6dea4 (core baseline 2.33), with the existing Blackfin compiler. Requires original OP-1 firmware 246 and Opus core 2.31 or later for the new native page interface.
 
@@ -16,3 +16,5 @@ The test uses mocked native opus_fx instances and page callbacks. It does not em
 The adapter preserves the effective eight control words on repeated init calls for the same initialized instance during a sound reload. A factory call while the effect browser is open followed by default parameter words is treated as explicit re-selection and resets. A newly allocated/cleared managed instance starts fresh. Tests cover those calls; actual core and manager lifecycle behavior still needs device confirmation.
 
 Version 1.0.0 changes only the version and display name from delivered 0.3.0. It does not include the cancelled 0.3.1 duplicate-bypass experiment.
+
+Version 1.0.1 adds encoder acceleration to continuous controls.

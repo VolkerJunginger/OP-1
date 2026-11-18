@@ -2,7 +2,7 @@ opmod     1
 id        esc.braidslive
 name      Hits
 author    esc
-version   1.0.0
+version   1.0.1
 core      2.57
 adds      engine hits
 uses      blue_turn drum t1 "pitch / color"

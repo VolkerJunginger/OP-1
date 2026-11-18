@@ -5,6 +5,9 @@
 #include <stdarg.h>
 #include "opus_plugin.h"
 #include "op1fw.h"
+static int (*registered_filter)(int,int);
+void opus_on_key_filter(struct opl_self *self,int (*fn)(int,int))
+{ (void)self;registered_filter=fn; }
 static int t_list,t_shift,t_fn,t_frames,t_paths,t_text;
 static void (*t_setting)(const char *,int);
 static void *t_allocated[32];static unsigned t_count;
@@ -62,14 +65,90 @@ static void select_page(int i){
 }
 static void draw(int i){select_page(i);t_draw_active=0;registered->screen_draw(t_screen,16);t_draw_active=0;}
 static void turn(int i,int enc,int d){select_page(i);assert(registered->page_turn(&shown,enc,d));}
-static void push(int i,int code){select_page(i);assert(registered->page_key(&shown,code,1));assert(registered->page_key(&shown,code,0));}
+static unsigned os_arrows, module_arrows;
+static int dispatch_event(int code, int pressed)
+{
+ if (registered_filter && registered_filter(code, pressed)) return 1;
+ /* Model the reported failure path: core/OS takes arrows before page_key. */
+ if (code == 0x24 || code == 0x25) { ++os_arrows; return 1; }
+ ++module_arrows;
+ return registered->page_key(&shown, code, pressed);
+}
+static void push(int i,int code)
+{
+ select_page(i);
+ assert(dispatch_event(code,1));
+ assert(dispatch_event(code,0));
+}
+static void test_navigation(void)
+{
+ struct native_instance *a=fx[0].state,*b=fx[1].state;
+ short saved[2][8];memcpy(saved,params,sizeof saved);
+ select_page(0);t_shift=1;
+ unsigned original_os=os_arrows;
+ push(0,0x25);assert(a->ui.extra_page[0]==1 && b->ui.extra_page[0]==0);
+ push(0,0x24);assert(a->ui.extra_page[0]==0);
+ push(0,0x24);assert(a->ui.extra_page[0]==0);
+ push(0,0x25);push(0,0x25);assert(a->ui.extra_page[0]==1);
+ assert(os_arrows==original_os);
+ t_shift=0;draw(0);assert(a->ui.extra_page[0]==1);
+ t_shift=1;draw(0);assert(a->ui.extra_page[0]==1);
+ push(1,0x24);assert(b->ui.extra_page[0]==0 && a->ui.extra_page[0]==1);
+ push(1,0x25);assert(b->ui.extra_page[0]==1);
+ push(0,0x24);assert(a->ui.extra_page[0]==0 && b->ui.extra_page[0]==1);
+ /* Release remains paired after Shift release and a different page/instance. */
+ select_page(0);assert(dispatch_event(0x25,1));t_shift=0;
+ shown.module=0;assert(dispatch_event(0x25,0));
+ assert(os_arrows==original_os);
+ select_page(0);t_shift=1;
+ /* No frame freshness requirement and no inherited state on other pages. */
+ frame_number+=100;viewed_frame=0;viewed_owner=-1;
+ push(0,0x24);assert(a->ui.extra_page[0]==0);
+ assert(os_arrows==original_os);
+ t_shift=0;push(0,0x25);assert(a->ui.extra_page[0]==0 && os_arrows==original_os+2);
+ t_shift=1;t_fn=1;push(0,0x25);assert(a->ui.extra_page[0]==0);t_fn=0;
+ select_page(0);shown.on=0;dispatch_event(0x25,1);dispatch_event(0x25,0);assert(a->ui.extra_page[0]==0);
+ select_page(0);shown.module=0;dispatch_event(0x25,1);dispatch_event(0x25,0);assert(a->ui.extra_page[0]==0);
+ select_page(0);shown.where=2;dispatch_event(0x25,1);dispatch_event(0x25,0);assert(a->ui.extra_page[0]==0);
+ select_page(0);shown.inst=0;dispatch_event(0x25,1);dispatch_event(0x25,0);assert(a->ui.extra_page[0]==0);
+ assert(!memcmp(saved,params,sizeof saved));
+ t_shift=0;a->ui.extra_page[0]=b->ui.extra_page[0]=0;select_page(0);
+ puts("Shift arrows passed through pre-core routing, page/instance guards and paired releases");
+}
 static void process(int i,short buf[64]){registered->mono(&fx[i],buf,params[i]);}
+static void (*expire_turn)(void);
+void opus_key_timer(struct opl_self *self, unsigned ms, void (*fn)(void))
+{ (void)self; assert(ms == 120); expire_turn = fn; }
+
 int main(void){
  struct opl_self self={sizeof self,"esc.test","/yaffs2/mod/esc.test",0};
  assert(opl_init(&self)==0&&registered&&registered->page_key&&registered->page_turn&&registered->screen_draw);
  struct opus_need n={0};registered->need(0,&n);
  for(int i=0;i<2;++i){fx[i].state=calloc(1,n.state);fx[i].bulk=calloc(1,n.bulk);fx[i].fast=n.fast?calloc(1,n.fast):0;assert(fx[i].state&&fx[i].bulk);memcpy(params[i],registered->defaults,sizeof params[i]);registered->init(&fx[i]);}
  registered->screen_init(t_screen);draw(0);assert(t_frames==1&&t_paths>0&&t_text>=8);
+ test_navigation();draw(0);
+ /* Normal page turns arrive in detents, with one replaceable timer. */
+ short original_time=params[0][0];
+ int step=registered->limits[0][2]/8;
+ params[0][0]=10*step;
+ turn(0,0,1);turn(0,0,1);turn(0,0,1);
+ assert(params[0][0]==14*step && expire_turn);
+ expire_turn();
+ turn(0,0,1);assert(params[0][0]==15*step);
+ turn(0,0,-1);assert(params[0][0]==14*step);
+ expire_turn();
+ const int factors[]={1,1,2,2,2,4,4,4,4,8};
+ for(unsigned i=0;i<sizeof factors/sizeof factors[0];++i) {
+  params[0][0]=step;
+  turn(0,0,1);
+  assert(params[0][0]==(1+factors[i])*step);
+ }
+ short second_time=params[1][0];
+ params[1][0]=step;
+ turn(1,0,1);assert(params[1][0]==2*step);
+ params[1][0]=second_time; /* Restore the second instance for recall checks. */
+ expire_turn();
+ params[0][0]=original_time;
  int objects=t_constructed,sets=t_sets;draw(0);assert(t_constructed==objects&&t_sets==sets);
  short original[8];memcpy(original,params[1],sizeof original);
  turn(0,0,2);assert(params[0][0]!=params[1][0]);assert(!memcmp(original,params[1],sizeof original));

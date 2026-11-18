@@ -2,7 +2,7 @@ opmod     1
 id        esc.bubbler
 name      Bubbler
 author    ESC_CODE
-version   1.5.0
+version   1.5.2
 core      2.31
 adds      effect bubbler
 uses      blue_turn shift nofn modal "time var / pitch"
@@ -15,9 +15,9 @@ uses      white_push shift nofn modal "filter or resonance edit"
 place     jump 0x01a85750 bubbler_note_on expect 00e80400 as grain_note
 # built by op1mod plugin
 deep      fw_draw_path fw_line_style_make fw_path_clear fw_path_close fw_path_cubic fw_path_finish fw_path_init fw_path_line_to fw_path_move_to fw_screen_draw fw_screen_fill fw_screen_line_style fw_screen_raster fw_set_text fw_shift_held fw_snprintf fw_stroke_path fw_svg_node_find fw_text_draw fw_text_new fw_yaffs_close fw_yaffs_mkdir fw_yaffs_open fw_yaffs_read fw_yaffs_stat fw_yaffs_write
-ram       image 134520 zero 696
-imports   33
+ram       image 134904 zero 712
+imports   35
 cpu       unmeasured
 checked: none (no checked line: not recorded as tested)
-image 134520 bytes, zero fill 696, entry +0x4f7c, 424 relocations, imports: fw_draw_path, fw_line_style_make, fw_path_clear, fw_path_close, fw_path_cubic, fw_path_finish, fw_path_init, fw_path_line_to, fw_path_move_to, fw_screen_draw, fw_screen_fill, fw_screen_line_style, fw_screen_raster, fw_set_text, fw_shift_held, fw_snprintf, fw_stroke_path, fw_svg_node_find, fw_text_draw, fw_text_new, fw_yaffs_close, fw_yaffs_mkdir, fw_yaffs_open, fw_yaffs_read, fw_yaffs_stat, fw_yaffs_write, opus_alloc, opus_effect_register, opus_fast, opus_flash_headroom, opus_fn_held, opus_fx_list_shown, opus_page_now
+image 134904 bytes, zero fill 712, entry +0x50d8, 448 relocations, imports: fw_draw_path, fw_line_style_make, fw_path_clear, fw_path_close, fw_path_cubic, fw_path_finish, fw_path_init, fw_path_line_to, fw_path_move_to, fw_screen_draw, fw_screen_fill, fw_screen_line_style, fw_screen_raster, fw_set_text, fw_shift_held, fw_snprintf, fw_stroke_path, fw_svg_node_find, fw_text_draw, fw_text_new, fw_yaffs_close, fw_yaffs_mkdir, fw_yaffs_open, fw_yaffs_read, fw_yaffs_stat, fw_yaffs_write, opus_alloc, opus_effect_register, opus_fast, opus_flash_headroom, opus_fn_held, opus_fx_list_shown, opus_key_timer, opus_on_key_filter, opus_page_now
 place grain_note: jump 0x01a85750 -> image+0x4020, expects 00e80400

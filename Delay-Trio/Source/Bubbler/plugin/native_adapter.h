@@ -6,6 +6,10 @@
 #include "screen_file.h"
 static char screen_path[256];
 static struct opl_self *native_self;
+#include "encoder_speed.h"
+static struct encoder_speed bubbler_speed;
+static void bubbler_expire(void) { bubbler_speed.burst = 0; }
+
 static void unpack_ui(const short p[8]) {
  struct native_ui *u=page_ui(); u->transpose=((unsigned short)p[6]>>15)|(((unsigned short)p[4]>>15)<<1)|(((unsigned short)p[5]>>15)<<2)|((((unsigned short)p[7]>>14)&1u)<<3);if(u->transpose>9)u->transpose=0;
 }
@@ -20,10 +24,40 @@ static int page_values(struct opus_page *pg,short p[8]) {
 static void commit(struct opus_page *pg,short p[8]) {
  pack_ui(p);for(int j=0;j<8;++j)pg->par[j]=p[j];
 }
+/* Core/OS arrow handling may precede the module's page_key callback.
+ * Inspect the native page in the documented pre-core key filter instead.
+ * Only physical key-up pairing is global; the remembered page is instance UI.
+ */
+static unsigned navigation_taken[2];
+static int navigation_filter(int code, int pressed)
+{
+ int arrow = code == 0x24 ? 0 : code == 0x25 ? 1 : -1;
+ if (arrow < 0) return 0;
+ if (!pressed) {
+  if (!navigation_taken[arrow]) return 0;
+  navigation_taken[arrow] = 0;
+  return 1;
+ }
+ if (navigation_taken[arrow]) return 1;
+ if (!fw_shift_held() || opus_fn_held()) return 0;
+ struct opus_page pg;
+ if (!opus_page_now(&pg) || pg.module != &native_effect ||
+     pg.kind != OPUS_PAGE_EFFECT || pg.where == 2 || !pg.on ||
+     !pg.inst || !pg.par || pg.n < 8) return 0;
+ struct opus_fx *fx = pg.inst;
+ if (fx->stereo || !fx->state) return 0;
+ struct native_instance *instance = fx->state;
+ if (instance->magic != 0x45534332u) return 0;
+ instance->ui.extra_page[0] = arrow;
+ bubbler_expire();
+ navigation_taken[arrow] = 1;
+ return 1;
+}
 static int page_key(struct opus_page *pg,int code,int pressed) {
  short p[8];if(!page_values(pg,p) || opus_fn_held())return 0;
  if(pg->where==2)return 1;
  viewed_owner=0;viewed_frame=frame_number;
+ if(pressed)bubbler_expire();
  int handled=key(code,pressed);if(handled)commit(pg,p);return handled;
 }
 static int esc_density_turn(int value,int detents)
@@ -44,6 +78,12 @@ static int page_turn(struct opus_page *pg,int encoder,int detents) {
  if(pg->where==2)return 1;
  viewed_owner=0;viewed_frame=frame_number;
  int d=clamp(detents,-64,64);
+ int shift=fw_shift_held();
+ int extra=page_ui()->extra_page[0];
+ int tag=encoder+4*shift+8*(shift&&extra)+16*(shift&&extra&&encoder==2&&page_ui()->res_edit[0]);
+ if(shift&&extra&&encoder==0)bubbler_expire();
+ else d=clamp(encoder_speed_turn(&bubbler_speed, native_self, bubbler_expire, pg->par, tag, d),-64,64);
+
  
  if(!(fw_shift_held() && BUBBLER.shift_knob && BUBBLER.shift_knob(p,encoder,d))) {
   if(encoder==2 && !fw_shift_held()){struct bb_params q;bb_decode(p,&q);q.density=esc_density_turn(q.density,d);bb_encode(p,&q);}else{int step=BUBBLER.limits[encoder][2]/8;
@@ -81,5 +121,8 @@ int opl_init(struct opl_self *s) {
  if(!native_screen_start(s) || !native_screen_file(s,screen_path,ESC_SVG,sizeof ESC_SVG-1))return -2;
  native_effect.svg=screen_path;native_effect.screen_init=native_screen_init;native_effect.screen_draw=screen_draw;
  native_effect.page_key=page_key;native_effect.page_turn=page_turn;
- int result=opus_effect_register(s,&native_effect);return result<0?result:0;
+ int result=opus_effect_register(s,&native_effect);
+ if(result<0)return result;
+ opus_on_key_filter(s,navigation_filter);
+ return 0;
 }

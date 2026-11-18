@@ -2,7 +2,7 @@ opmod     1
 id        esc.pitchdelay
 name      Pitch Delay
 author    ESC_CODE
-version   1.0.0
+version   1.0.1
 core      2.31
 adds      effect pitchdelay
 uses      white_push noshift nofn modal "pitch / octave edit"
@@ -11,8 +11,8 @@ uses      white_turn nofn modal "pitch or octave"
 uses      orange_turn nofn modal "mix or loop depth"
 # built by op1mod plugin
 deep      fw_draw_path fw_group_draw fw_line_style_make fw_path_clear fw_path_close fw_path_cubic fw_path_finish fw_path_init fw_path_line_to fw_path_move_to fw_screen_draw fw_screen_fill fw_screen_line_style fw_screen_raster fw_set_text fw_shift_held fw_snprintf fw_stroke_path fw_svg_node_find fw_text_draw fw_text_new fw_yaffs_close fw_yaffs_mkdir fw_yaffs_open fw_yaffs_read fw_yaffs_stat fw_yaffs_write
-ram       image 37524 zero 800
-imports   33
+ram       image 37732 zero 816
+imports   34
 cpu       unmeasured
 checked: none (no checked line: not recorded as tested)
-image 37524 bytes, zero fill 800, entry +0x924, 385 relocations, imports: fw_draw_path, fw_group_draw, fw_line_style_make, fw_path_clear, fw_path_close, fw_path_cubic, fw_path_finish, fw_path_init, fw_path_line_to, fw_path_move_to, fw_screen_draw, fw_screen_fill, fw_screen_line_style, fw_screen_raster, fw_set_text, fw_shift_held, fw_snprintf, fw_stroke_path, fw_svg_node_find, fw_text_draw, fw_text_new, fw_yaffs_close, fw_yaffs_mkdir, fw_yaffs_open, fw_yaffs_read, fw_yaffs_stat, fw_yaffs_write, opus_alloc, opus_effect_register, opus_flash_headroom, opus_fn_held, opus_fx_list_shown, opus_page_now
+image 37732 bytes, zero fill 816, entry +0x9ec, 399 relocations, imports: fw_draw_path, fw_group_draw, fw_line_style_make, fw_path_clear, fw_path_close, fw_path_cubic, fw_path_finish, fw_path_init, fw_path_line_to, fw_path_move_to, fw_screen_draw, fw_screen_fill, fw_screen_line_style, fw_screen_raster, fw_set_text, fw_shift_held, fw_snprintf, fw_stroke_path, fw_svg_node_find, fw_text_draw, fw_text_new, fw_yaffs_close, fw_yaffs_mkdir, fw_yaffs_open, fw_yaffs_read, fw_yaffs_stat, fw_yaffs_write, opus_alloc, opus_effect_register, opus_flash_headroom, opus_fn_held, opus_fx_list_shown, opus_key_timer, opus_page_now

@@ -2,7 +2,7 @@ opmod     1
 id        esc.delay
 name      Delayed
 author    ESC_CODE
-version   1.0.0
+version   1.0.1
 core      2.31
 adds      effect delayed
 uses      blue_turn shift nofn modal "lfo frequency"
@@ -15,8 +15,8 @@ uses      orange_push noshift nofn modal "freeze"
 setting   smooth off,on off "smooth lfo"
 # built by op1mod plugin
 deep      fw_draw_path fw_group_draw fw_line_style_make fw_path_clear fw_path_close fw_path_cubic fw_path_finish fw_path_init fw_path_line_to fw_path_move_to fw_screen_draw fw_screen_fill fw_screen_line_style fw_screen_raster fw_set_text fw_shift_held fw_snprintf fw_stroke_path fw_svg_node_find fw_text_draw fw_text_new fw_yaffs_close fw_yaffs_mkdir fw_yaffs_open fw_yaffs_read fw_yaffs_stat fw_yaffs_write
-ram       image 122996 zero 704
-imports   35
+ram       image 123184 zero 720
+imports   36
 cpu       unmeasured
 checked: none (no checked line: not recorded as tested)
-image 122996 bytes, zero fill 704, entry +0x2a00, 412 relocations, imports: fw_draw_path, fw_group_draw, fw_line_style_make, fw_path_clear, fw_path_close, fw_path_cubic, fw_path_finish, fw_path_init, fw_path_line_to, fw_path_move_to, fw_screen_draw, fw_screen_fill, fw_screen_line_style, fw_screen_raster, fw_set_text, fw_shift_held, fw_snprintf, fw_stroke_path, fw_svg_node_find, fw_text_draw, fw_text_new, fw_yaffs_close, fw_yaffs_mkdir, fw_yaffs_open, fw_yaffs_read, fw_yaffs_stat, fw_yaffs_write, opus_alloc, opus_effect_register, opus_flash_headroom, opus_fn_held, opus_fx_list_shown, opus_on_setting, opus_page_now, opus_setting
+image 123184 bytes, zero fill 720, entry +0x2ab4, 426 relocations, imports: fw_draw_path, fw_group_draw, fw_line_style_make, fw_path_clear, fw_path_close, fw_path_cubic, fw_path_finish, fw_path_init, fw_path_line_to, fw_path_move_to, fw_screen_draw, fw_screen_fill, fw_screen_line_style, fw_screen_raster, fw_set_text, fw_shift_held, fw_snprintf, fw_stroke_path, fw_svg_node_find, fw_text_draw, fw_text_new, fw_yaffs_close, fw_yaffs_mkdir, fw_yaffs_open, fw_yaffs_read, fw_yaffs_stat, fw_yaffs_write, opus_alloc, opus_effect_register, opus_flash_headroom, opus_fn_held, opus_fx_list_shown, opus_key_timer, opus_on_setting, opus_page_now, opus_setting

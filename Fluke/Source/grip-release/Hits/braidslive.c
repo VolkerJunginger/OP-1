@@ -90,6 +90,10 @@ static const short kit[24][8] = {
     {3584, 13500, 14500, 9500, 14, 0, 24576, 0},
 };
 static struct opl_self *plugin;
+#include "encoder_speed.h"
+static struct encoder_speed hits_speed;
+static void hits_expire(void) { hits_speed.burst = 0; }
+
 
 static inline int clamp(int x, int lo, int hi)
 {
@@ -694,6 +698,7 @@ static int page_key(struct opus_page *pg, int key, int pressed)
             return 1;
         volatile short *par = pg->par;
         if (key == 0x3b) {
+            hits_expire();
             int model = model_index(par[4]) + 1;
             par[4] = (short)model_value(model == MODEL_COUNT ? 0 : model);
         } else if (key == 0x3c) {
@@ -720,7 +725,8 @@ static int page_turn(struct opus_page *pg, int encoder, int detents)
     encoder &= 3;
     if (!detents || !retarget_edit_page(pg))
         return 1;
-    detents = clamp(detents, -64, 64);
+    int tag = encoder + 4 * shifted + 8 * pg->key + 192 * pg->slot;
+    detents = clamp(encoder_speed_turn(&hits_speed, plugin, hits_expire, pg->par, tag, detents), -64, 64);
     volatile short *par = pg->par;
     if (!shifted) {
         int lo = encoder == 0 ? -24320 : 0;

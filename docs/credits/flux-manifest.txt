@@ -2,7 +2,7 @@ opmod 1
 id esc.hitsmod
 name FLUX
 author esc
-version 1.0.0
+version 1.0.2
 core 2.33
 needs esc.braidslive 1.0.0
 adds lfo flux

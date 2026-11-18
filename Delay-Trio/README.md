@@ -4,13 +4,15 @@ Three mono delay effects by **ESC_CODE** for the **original Teenage Engineering 
 
 ## Downloads
 
-[Download all three devices and the illustrated manual](Delay-Trio-Bubbler-1.5.0-Delayed-1.0.0-Pitch-Delay-1.0.0.zip) · [Illustrated manual (PDF)](Delay%20Trio%20Illustrated%20Manual.pdf)
+[Download all three devices and the illustrated manual](Delay-Trio-Bubbler-1.5.2-Delayed-1.0.1-Pitch-Delay-1.0.1.zip) · [Illustrated manual (PDF)](Delay%20Trio%20Illustrated%20Manual.pdf)
 
 | Device | Version | Description | Download |
 |---|---|---|---|
-| Bubbler | 1.5.0 | Granular delay with overlapping grains, variable timing, pitch and reverse playback | [bubbler.opmod](bubbler.opmod) |
-| Delayed | 1.0.0 | Delay with resonant feedback filter, Freeze and six LFO shapes | [delayed.opmod](delayed.opmod) |
-| Pitch Delay | 1.0.0 | Pitch-shifting delay with octave and loop-depth controls | [pitchdelay.opmod](pitchdelay.opmod) |
+| Bubbler | 1.5.2 | Granular delay with overlapping grains, variable timing, pitch and reverse playback | [bubbler.opmod](bubbler.opmod) |
+| Delayed | 1.0.1 | Delay with resonant feedback filter, Freeze and six LFO shapes | [delayed.opmod](delayed.opmod) |
+| Pitch Delay | 1.0.1 | Pitch-shifting delay with octave and loop-depth controls | [pitchdelay.opmod](pitchdelay.opmod) |
+
+Bubbler 1.5.2 restores Shift + Left/Right page navigation and was tested on the original OP-1 by the maintainer. All three devices now accelerate continuous encoder adjustments. Hardware verification of Delayed and Pitch Delay 1.0.1 is pending.
 
 ## Installation
 
@@ -24,7 +26,7 @@ The effects support native first and second slots, including two instances of th
 
 When upgrading from the earlier hosted versions, reselect each effect and save your sound again. Older hosted-format settings are not automatically converted. No OP-1 wipe is required.
 
-## Bubbler 1.5.0
+## Bubbler 1.5.2
 
 ![Bubbler screen preview](Screenshots/Bubbler.png)
 
@@ -36,7 +38,7 @@ When upgrading from the earlier hosted versions, reselect each effect and save y
 
 Hold Shift and use the left/right arrows to change extra pages. Releasing Shift returns to Main; the last extra page is remembered. Pitch runs **−12, −7, −5, −3, Off, key, +3, +5, +7, +12**. Density uses fine low-value steps and steps no larger than 4% at high values. Pitch Var controls the chance of adding a random octave to a grain. MIDI supplies pitch in key mode. No extra Opus settings.
 
-## Delayed 1.0.0
+## Delayed 1.0.1
 
 ![Delayed screen preview](Screenshots/Delayed.png)
 
@@ -47,7 +49,7 @@ Hold Shift and use the left/right arrows to change extra pages. Releasing Shift 
 
 Shapes: **Sine, Tri, Square, Up, Down, Rand**. **Smooth LFO** is the only extra Opus setting; it softens abrupt LFO transitions, including both Square edges. Feedback reaches 200%.
 
-## Pitch Delay 1.0.0
+## Pitch Delay 1.0.1
 
 ![Pitch Delay screen preview](Screenshots/Pitch-Delay.png)
 

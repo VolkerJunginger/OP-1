@@ -6,6 +6,10 @@
 #include "screen_file.h"
 static char screen_path[256];
 static struct opl_self *native_self;
+#include "encoder_speed.h"
+static struct encoder_speed pitch_speed;
+static void pitch_expire(void) { pitch_speed.burst = 0; }
+
 static void unpack_ui(const short p[8]) {
  struct native_ui *u=page_ui(); u->saved_extras[0]=(unsigned short)p[4]&1023u;
 }
@@ -24,6 +28,7 @@ static int page_key(struct opus_page *pg,int code,int pressed) {
  short p[8];if(!page_values(pg,p) || opus_fn_held())return 0;
  if(pg->where==2)return 1;
  view_owner=0;view_frame=frame;
+ if(pressed)pitch_expire();
  int handled=key(code,pressed);if(handled)commit(pg,p);return handled;
 }
 
@@ -32,7 +37,12 @@ static int page_turn(struct opus_page *pg,int encoder,int detents) {
  if(pg->where==2)return 1;
  view_owner=0;view_frame=frame;
  int d=clamp(detents,-64,64);
- short delta=(short)clamp(d*4096,-32768,32767);if(knob(encoder,&delta)){commit(pg,p);return 1;}
+ int extra=encoder>=2 && page_ui()->edit[0][encoder-2];
+ int tag=encoder+4*fw_shift_held()+8*extra;
+ if(extra && encoder==2)pitch_expire();
+ else d=clamp(encoder_speed_turn(&pitch_speed, native_self, pitch_expire, pg->par, tag, d),-64,64);
+
+ if(knob(encoder,d)){commit(pg,p);return 1;}
  if(!(fw_shift_held() && PITCH.shift_knob && PITCH.shift_knob(p,encoder,d))) {
   int step=PITCH.limits[encoder][2]/8;
   if(fw_shift_held())step=step>8?step/8:1;

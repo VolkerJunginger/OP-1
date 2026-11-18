@@ -4,7 +4,7 @@ Tools and plugins for the **original Teenage Engineering OP-1**.
 
 ## FLUKE, HITS, FLUX and GRIP
 
-**FLUKE 2.0.0** is a generative melody and drum sequencer. **HITS 1.0.0** is a 24-pad drum engine, **FLUX 1.0.0** adds two LFOs per HITS pad, and **GRIP 1.0.0** is a compressor. The set requires original OP-1 firmware 246 and Opus core 2.57 or newer.
+**FLUKE 2.0.1** is a generative melody and drum sequencer. **HITS 1.0.1** is a 24-pad drum engine, **FLUX 1.0.2** adds two LFOs per HITS pad, and **GRIP 1.0.1** is a compressor. The set requires original OP-1 firmware 246 and Opus core 2.57 or newer.
 
 [Device page](https://volkerjunginger.github.io/OP-1/) · [Download all four](docs/downloads/op1-devices.zip) · [Illustrated manual](docs/manuals/FLUKE%20v.2.0.0%20Manual.pdf) · [Installation and source](Fluke)
 
@@ -14,11 +14,11 @@ Three SoundHack delay ports by **ESC_CODE**, based on **Tom Erbe’s +bubbler, +
 
 | Device | Version | What it does |
 |---|---|---|
-| [Bubbler](Delay-Trio#bubbler-150) | 1.5.0 | Granular delay with density, timing variation, pitch and reverse grains |
-| [Delayed](Delay-Trio#delayed-100) | 1.0.0 | Modulated delay with resonant filter, Freeze and Smooth LFO |
-| [Pitch Delay](Delay-Trio#pitch-delay-100) | 1.0.0 | Pitch-shifting delay with octave and loop-depth controls |
+| [Bubbler](Delay-Trio#bubbler-152) | 1.5.2 | Granular delay with density, timing variation, pitch and reverse grains |
+| [Delayed](Delay-Trio#delayed-101) | 1.0.1 | Modulated delay with resonant filter, Freeze and Smooth LFO |
+| [Pitch Delay](Delay-Trio#pitch-delay-101) | 1.0.1 | Pitch-shifting delay with octave and loop-depth controls |
 
-[**Download all three devices + illustrated manual**](Delay-Trio/Delay-Trio-Bubbler-1.5.0-Delayed-1.0.0-Pitch-Delay-1.0.0.zip) · [**Manual PDF**](Delay-Trio/Delay%20Trio%20Illustrated%20Manual.pdf) · [**Installation, controls and source**](Delay-Trio)
+[**Download all three devices + illustrated manual**](Delay-Trio/Delay-Trio-Bubbler-1.5.2-Delayed-1.0.1-Pitch-Delay-1.0.1.zip) · [**Manual PDF**](Delay-Trio/Delay%20Trio%20Illustrated%20Manual.pdf) · [**Installation, controls and source**](Delay-Trio)
 
 ![Bubbler](Delay-Trio/Screenshots/Bubbler.png)
 ![Delayed](Delay-Trio/Screenshots/Delayed.png)
@@ -27,11 +27,11 @@ Three SoundHack delay ports by **ESC_CODE**, based on **Tom Erbe’s +bubbler, +
 Requires **original OP-1 firmware 246 and Opus core 2.31+**.
 Credit to [Tom Erbe / SoundHack](https://www.soundhack.com/) for the original algorithms, [LizardMan245 and the Opus contributors](https://github.com/LizardMan245/opus) for the framework, and [SquareWave Studio](https://squarewave-studio.github.io/op1-design-kit/) for design guidance. [Full credits and licences](Delay-Trio/Credits.md).
 
-## Midi-Reverb 1.0
+## Midi-Reverb 1.0.1
 
 A mono ROM-based reverb and effects device by **ESC_CODE**, for the original OP-1 with **Opus core 2.31+**.Feedback, Cutoff, Mix and Program; Orange press changes ROM. Includes Original and approximate Low CPU engines and an optional Output-Filter. Master audio passes through.
 
-[**Download Midi-Reverb**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/Midi-Reverb/midireverb.opmod) · [**Installation, ROM requirements, controls and source**](Midi-Reverb) · [**Complete package**](Midi-Reverb/Midi-Reverb-1.0.0.zip)
+[**Download Midi-Reverb**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/Midi-Reverb/midireverb.opmod) · [**Installation, ROM requirements, controls and source**](Midi-Reverb) · [**Complete package**](Midi-Reverb/Midi-Reverb-1.0.1.zip)
 
 ![Midi-Reverb, ROM bank I](Midi-Reverb/Screenshots/ROM-bank-I.png)
 

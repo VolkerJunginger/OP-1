@@ -1,12 +1,14 @@
-# Midi-Reverb 1.0.0
+# Midi-Reverb 1.0.1
 
 Mono ROM-based reverb/effects for the original OP-1 (firmware 246), requiring Opus core 2.31 or later. Built with the 2.33 SDK baseline. This version migrates the 0.2.9 DSP to the native effect interface, so `midireverb` can be selected as the first effect or by a second-slot FX manager such as FX Overdrive. The mods-list name is **Midi-Reverb**; plugin ID `esc.midireverb`; filename `midireverb.opmod`.
 
-[**Download Midi-Reverb 1.0**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/Midi-Reverb/midireverb.opmod) · [**Complete package and source**](Midi-Reverb-1.0.0.zip)
+[**Download Midi-Reverb 1.0.1**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/Midi-Reverb/midireverb.opmod) · [**Complete package and source**](Midi-Reverb-1.0.1.zip)
 
 ![Midi-Reverb showing the MidiVerb I ROM bank](Screenshots/ROM-bank-I.png)
 
 *Rendered screen preview of the unchanged layout with ROM bank I selected. Hardware display validation for this native release remains pending.*
+
+Version 1.0.1 adds encoder acceleration to continuous controls. Build and host tests passed. Hardware verification of this update is pending.
 
 ## Install
 

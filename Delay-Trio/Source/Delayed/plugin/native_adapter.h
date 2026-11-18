@@ -6,6 +6,10 @@
 #include "screen_file.h"
 static char screen_path[256];
 static struct opl_self *native_self;
+#include "encoder_speed.h"
+static struct encoder_speed delayed_speed;
+static void delayed_expire(void) { delayed_speed.burst = 0; }
+
 static void unpack_ui(const short p[8]) {
  struct native_ui *u=page_ui(); u->resonance[0]=((unsigned short)p[6]>>3)&63u;u->frozen[0]=((unsigned short)p[6]>>9)&1u;
 }
@@ -24,6 +28,7 @@ static int page_key(struct opus_page *pg,int code,int pressed) {
  short p[8];if(!page_values(pg,p) || opus_fn_held())return 0;
  if(pg->where==2)return 1;
  view_owner=0;view_frame=frame;
+ if(pressed)delayed_expire();
  int handled=key(code,pressed);if(handled)commit(pg,p);return handled;
 }
 
@@ -32,7 +37,13 @@ static int page_turn(struct opus_page *pg,int encoder,int detents) {
  if(pg->where==2)return 1;
  view_owner=0;view_frame=frame;
  int d=clamp(detents,-64,64);
- short delta=(short)clamp(d*4096,-32768,32767);if(knob(encoder,&delta)){commit(pg,p);return 1;}
+ int shift=fw_shift_held();
+ int extra=!shift && encoder==2 && page_ui()->res_edit[0];
+ int tag=encoder+4*shift+8*extra;
+ if(shift && encoder==2)delayed_expire();
+ else d=clamp(encoder_speed_turn(&delayed_speed, native_self, delayed_expire, pg->par, tag, d),-64,64);
+
+ if(knob(encoder,d)){commit(pg,p);return 1;}
  if(!(fw_shift_held() && DELAY.shift_knob && DELAY.shift_knob(p,encoder,d))) {
   int step=DELAY.limits[encoder][2]/8;
   if(fw_shift_held())step=step>8?step/8:1;

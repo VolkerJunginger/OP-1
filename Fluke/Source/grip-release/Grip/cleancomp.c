@@ -255,6 +255,10 @@ static void check_hits(void)
 }
 
 static const struct opus_effect effect;
+#include "../Hits/encoder_speed.h"
+static struct encoder_speed grip_speed;
+static void grip_expire(void) { grip_speed.burst = 0; }
+
 
 static int kick_sc_available(const struct opus_page *page, int hits)
 {
@@ -432,6 +436,41 @@ static void screen_draw(void *screen, int dt)
     }
 }
 
+static struct opl_self *encoder_plugin;
+
+static int page_turn(struct opus_page *pg, int encoder, int detents)
+{
+    if (!pg || pg->module != &effect || !pg->par || pg->n < 8 ||
+        opus_fn_held() || (unsigned)encoder >= 4)
+        return 0;
+    if (!detents)
+        return 1;
+    if (fw_shift_held()) {
+        static const unsigned char param[] = {5, 6, 4, 7};
+        int k = param[encoder];
+        if (encoder >= 2)
+            detents = encoder_speed_turn(&grip_speed, encoder_plugin, grip_expire, pg->par, k, detents);
+        else
+            grip_expire();
+        short values[8];
+        values[k] = pg->par[k];
+        shift_knob(values, encoder, detents);
+        pg->par[k] = values[k];
+        return 1;
+    }
+    if (encoder == 0 || encoder == 2 || encoder == 3)
+        detents = encoder_speed_turn(&grip_speed, encoder_plugin, grip_expire, pg->par, encoder, detents);
+    else
+        grip_expire();
+    int maximum = effect.limits[encoder][1];
+    /* Match the stock 8192/8 step, including any fractional preset value. */
+    if (detents > 32) detents = 32;
+    if (detents < -32) detents = -32;
+    int value = pg->par[encoder] + detents * 1024;
+    pg->par[encoder] = (short)(value < 0 ? 0 : value > maximum ? maximum : value);
+    return 1;
+}
+
 #define KNOB(max) { 0, (max) * 1024, 8192 }
 static const struct opus_effect effect = {
     .size = sizeof(struct opus_effect),
@@ -447,11 +486,12 @@ static const struct opus_effect effect = {
     .svg = "/yaffs2/mod/op1lab.cleancomp/grip-native.svg",
     .screen_draw = screen_draw,
     .page_key = page_key,
-    .shift_knob = shift_knob,
+    .page_turn = page_turn,
 };
 
 int opl_init(struct opl_self *self)
 {
+    encoder_plugin = self;
     if (opus_art_text(self, "grip-native.svg", screen_svg, sizeof screen_svg - 1) < 0)
         return -1;
     if (opus_effect_register(self, &effect) < 0)

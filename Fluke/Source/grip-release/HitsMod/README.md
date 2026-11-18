@@ -1,6 +1,6 @@
-# FLUX 1.0.0
+# FLUX 1.0.2
 
-A dedicated T4 modulator for HITS on the original OP-1. Requires Opus 2 core 2.33 or newer and [HITS 1.0.0](../../../../docs/downloads/hits.opmod). HITS and [FLUKE 2.0.0](../../../../docs/downloads/fluke.opmod) each load alone. When both are installed, they connect automatically on opening HITS or FLUX.
+A dedicated T4 modulator for HITS on the original OP-1. Requires Opus 2 core 2.33 or newer and HITS 1.0.0 or newer. HITS and FLUKE each load alone. When both are installed, they connect automatically on opening HITS or FLUX.
 
 ## Install and play
 
@@ -36,12 +36,20 @@ The phase clock follows rendered audio blocks independently of note activity. Lo
 From the project root on macOS, using the pinned Opus SDK:
 
 ```sh
-kit=/path/to/plugin-kit
+kit=work/opus-baseline-2026-11-15/plugin-kit
 clang -std=c11 -Wall -Wextra -Werror -Wno-int-to-pointer-cast \
   -ffunction-sections -fdata-sections -Wl,-dead_strip \
   -fsanitize=address,undefined -fno-sanitize-recover=all \
-  -I "$kit/sdk" grip-release/tests/test_hits_mod.c -o /tmp/hits-mod-test
+  -I "$kit/sdk" work/grip-release/tests/test_hits_mod.c -o /tmp/hits-mod-test
 /tmp/hits-mod-test
 ```
 
 The check runs both plugins' C code together against the SDK callback sequence and compares rendered HITS audio across pads. It also checks waveform values, silent phase, bypass, slot isolation and display state. Hardware loading, UI, audio timing, persistence and CPU use remain unverified.
+
+## 1.0.2 display fix
+
+The defensive OFF guard skips both FLUX drawing paths, but does not select the host OFF presentation. Active FLUX in the synth slot shows Needs HITS, even when HITS is selected in the drum slot. Build/show, embedded SVG and ASan/UBSan passed. Native OFF appearance needs OP-1 confirmation.
+
+### OFF screen limitation, confirmed 2026-11-18
+
+The user reports that 1.0.2 still shows a different OFF screen. The SDK documents that custom LFO page hooks are not called while the LFO is off. The 1.0.2 guard therefore cannot fix the host OFF artwork. The pinned SDK and current upstream expose no native LFO OFF drawing service. `fw_fx_off_draw` is specifically the effect bypass overlay and cannot substitute for it. A verified host implementation or upstream support is needed to complete this request. No corrected OFF build has been validated.

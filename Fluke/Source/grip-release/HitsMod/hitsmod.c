@@ -58,6 +58,10 @@ static const short defaults[PARAM_COUNT] = {
 #undef DEFAULT_PAIR
 
 static struct opl_self *plugin;
+#include "../Hits/encoder_speed.h"
+static struct encoder_speed flux_speed;
+static void flux_expire(void) { flux_speed.burst = 0; }
+
 static const struct opus_lfo_type type;
 static unsigned block_clock;
 static struct hits_mod_delta deltas[HITS_MOD_PADS];
@@ -215,8 +219,10 @@ static int select_lfo(struct opus_page *page, int key, int pressed)
         return hits_fluke_hold_key(pressed);
     if (key != 0x3b)
         return 0;
-    if (pressed && control_pad() >= 0)
+    if (pressed && control_pad() >= 0) {
+        flux_expire();
         active_lfo[page->slot] ^= 1u;
+    }
     return 1;
 }
 
@@ -237,6 +243,10 @@ static int edit_lfo(struct opus_page *page, int encoder, int detents)
         return 1;
     unsigned index = (unsigned)pad * LFO_COUNT + active_lfo[page->slot];
     struct setting setting = unpack(page->par[index]);
+    if (encoder == 1 || encoder == 2)
+        detents = encoder_speed_turn(&flux_speed, plugin, flux_expire, page->par, (int)index * 4 + encoder, detents);
+    else
+        flux_expire();
     switch (encoder) {
     case 0: setting.wave = turn_value(setting.wave, detents, WAVE_COUNT - 1); break;
     case 1: setting.rate = turn_value(setting.rate, detents, RATE_COUNT - 1); break;
@@ -472,8 +482,14 @@ static void draw(void *screen)
         OPUS_RGB(0x698eff), OPUS_RGB(0x00ed95), OPUS_RGB(0xcdcdff), FLUX_RED
     };
     struct opus_page page;
-    int valid = opus_page_now(&page) && is_mod_page(&page);
-    int needs_hits = !valid && !hits_is_selected();
+    int own_page = opus_page_now(&page) &&
+                   page.kind == OPUS_PAGE_LFO && page.module == &type;
+    /* Defensive guard only: the SDK does not call LFO page hooks while OFF.
+     * The host owns that screen; returning here cannot select its OFF artwork. */
+    if (!own_page || !page.on)
+        return;
+    int valid = is_mod_page(&page);
+    int needs_hits = page.where != OPUS_FX_DRUM || !hits_is_selected();
     int hold = valid ? hits_fluke_hold_state() : -1;
     int linked = hold >= 0;
     int pad = valid && !linked ? current_hits_pad() : -1;
@@ -493,7 +509,7 @@ static void draw(void *screen)
     if (needs_hits) {
         if (!screen)
             opus_page_fill(29, 61, 291, 86, OPUS_RGB(0x000000));
-        flux_label(raster, 1, 78, 67, 11, FLUX_GREY, 0, "this device needs hits");
+        flux_label(raster, 1, 78, 67, 11, FLUX_GREY, 0, "needs hits");
     }
     if (!valid)
         return;

@@ -6,10 +6,12 @@ Four Opus plugins for the **original Teenage Engineering OP-1**, firmware **246*
 
 | Device | Version | What it does |
 | --- | --- | --- |
-| [FLUKE](../docs/downloads/fluke.opmod) | 2.0.0 | Generative melody and six-lane drum sequencer |
-| [HITS](../docs/downloads/hits.opmod) | 1.0.0 | 24 drum pads and 17 synthesis models |
-| [FLUX](../docs/downloads/flux.opmod) | 1.0.0 | Two independent LFOs per HITS pad |
-| [GRIP](../docs/downloads/grip.opmod) | 1.0.0 | Compressor for synth, drum, and master FX |
+| [FLUKE](../docs/downloads/fluke.opmod) | 2.0.1 | Generative melody and six-lane drum sequencer |
+| [HITS](../docs/downloads/hits.opmod) | 1.0.1 | 24 drum pads and 17 synthesis models |
+| [FLUX](../docs/downloads/flux.opmod) | 1.0.2 | Two independent LFOs per HITS pad |
+| [GRIP](../docs/downloads/grip.opmod) | 1.0.1 | Compressor for synth, drum, and master FX |
+
+All four devices now accelerate continuous encoder adjustments. FLUX 1.0.2 also shows “needs hits” when selected in the Synth slot. The native LFO OFF display remains an open issue. Build and host tests passed. Hardware verification of these updates is pending.
 
 ## Install
 

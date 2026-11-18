@@ -80,12 +80,11 @@ static int key(int code,int pressed)
  if(pressed && ((code>=1&&code<=9)||code==0x15||code==0x2c||(code>=0x2d&&code<=0x2f)||code==0x10||(code>=0x11&&code<=0x14)))view_owner=-1;
  return 0;
 }
-static int knob(int index,short *delta)
+static int knob(int index,int detents)
 {
  int o=owner_now();
  if(opus_fn_held() || (index&3)!=2 || !focused() || fw_shift_held() || !res_edit[o])return 0;
- knob_acc+=*delta>>10;
- int detents=knob_acc/4;knob_acc-=detents*4;
+
  if(detents){resonance[o]=clamp(resonance[o]+detents*2,0,63);save_res(o);}
  return 1;
 }

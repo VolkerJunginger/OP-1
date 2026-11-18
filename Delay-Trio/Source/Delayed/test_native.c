@@ -65,6 +65,8 @@ static void draw(int i){select_page(i);t_draw_active=0;registered->screen_draw(t
 static void turn(int i,int enc,int d){select_page(i);assert(registered->page_turn(&shown,enc,d));}
 static void push(int i,int code){select_page(i);assert(registered->page_key(&shown,code,1));assert(registered->page_key(&shown,code,0));}
 static void process(int i,short buf[64]){registered->mono(&fx[i],buf,params[i]);}
+void opus_key_timer(struct opl_self *self, unsigned ms, void (*fn)(void))
+{ (void)self; assert(ms == 120); fn(); }
 int main(void){
  struct opl_self self={sizeof self,"esc.test","/yaffs2/mod/esc.test",0};
  assert(opl_init(&self)==0&&registered&&registered->page_key&&registered->page_turn&&registered->screen_draw);
@@ -84,7 +86,7 @@ int main(void){
  memcpy(params[0],saved,sizeof saved);t_shift=0;
 #endif
 #ifdef TEST_DELAY
- push(0,0x3d);turn(0,2,6);assert(((unsigned short)params[0][6]>>3 &63u)==12);assert(params[1][6]==0);
+ push(0,0x3d);turn(0,2,6);assert(((unsigned short)params[0][6]>>3 &63u)==48);assert(params[1][6]==0);
  push(0,0x3e);assert((unsigned short)params[0][6]&512u);assert(!((unsigned short)params[1][6]&512u));push(0,0x3e);
  t_shift=1;turn(0,2,1);assert((params[0][6]&7)==1);draw(0);struct opus_fx_view v={0};short plain[8];select_page(0);page_values(&shown,plain);view(plain,&v);assert(!strcmp(v.value[2],"tri"));t_shift=0;
  assert(t_setting);t_setting("smooth",1);t_setting("smooth",0);

@@ -65,6 +65,8 @@ static void draw(int i){select_page(i);t_draw_active=0;registered->screen_draw(t
 static void turn(int i,int enc,int d){select_page(i);assert(registered->page_turn(&shown,enc,d));}
 static void push(int i,int code){select_page(i);assert(registered->page_key(&shown,code,1));assert(registered->page_key(&shown,code,0));}
 static void process(int i,short buf[64]){registered->mono(&fx[i],buf,params[i]);}
+void opus_key_timer(struct opl_self *self, unsigned ms, void (*fn)(void))
+{ (void)self; assert(ms == 120); fn(); }
 int main(void){
  struct opl_self self={sizeof self,"esc.test","/yaffs2/mod/esc.test",0};
  assert(opl_init(&self)==0&&registered&&registered->page_key&&registered->page_turn&&registered->screen_draw);

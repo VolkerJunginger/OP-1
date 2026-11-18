@@ -76,11 +76,11 @@ static int key(int code,int pressed)
  if(pressed && ((code>=1&&code<=9)||code==0x15||code==0x2c||(code>=0x2d&&code<=0x2f)||code==0x10||(code>=0x11&&code<=0x14)))view_owner=-1;
  return 0;
 }
-static int knob(int index,short *delta)
+static int knob(int index,int detents)
 {
  int which=(index&3)-2,o=owner_now();
  if(opus_fn_held() || which<0 || !focused() || !edit[o][which])return 0;
- acc[o][which]+=*delta>>10;int d=acc[o][which]/4;acc[o][which]-=d*4;
+ int d=detents;
  if(d) {
   unsigned v=extras[o];int oct=octave(v),dep=depth(v);
   if(which==0)oct=clamp(oct+d,-3,3);else dep=clamp(dep+d,10,100);

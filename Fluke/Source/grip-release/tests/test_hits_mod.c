@@ -435,9 +435,35 @@ static void test_page(short params[PARAM_COUNT])
     selected = 0;
     assert(!registered->page_turn(&visible, 1, 1));
     registered->page();
-    assert(!strcmp(text_slots[1], "this device needs hits"));
+    assert(!strcmp(text_slots[1], "needs hits"));
     registered->screen_draw(&screen, 0);
     assert(!svg_nodes[svg_index("fluxart")][0x50] && svg_nodes[svg_index("selectsound")][0x50]);
+    /* HITS in the drum slot cannot serve a synth-slot FLUX instance. */
+    selected = 1;
+    visible.where = OPUS_FX_SYNTH;
+    memset(text_slots, 0, sizeof text_slots);
+    registered->page();
+    assert(!strcmp(text_slots[1], "needs hits"));
+    assert(!text_slots[9][0] && !text_slots[18][0]);
+    registered->screen_draw(&screen, 0);
+    assert(!svg_nodes[svg_index("drumkeyboard")][0x50]);
+    assert(!registered->page_turn(&visible, 1, 1));
+    /* Neither drawing path paints over the host OFF screen. */
+    for (int where = OPUS_FX_SYNTH; where <= OPUS_FX_DRUM; ++where) {
+        visible.where = where;
+        visible.on = 0;
+        unsigned drawn = native_draws;
+        unsigned drawn_lines = lines;
+        memset(text_slots, 0, sizeof text_slots);
+        registered->page();
+        registered->screen_draw(&screen, 0);
+        assert(native_draws == drawn && lines == drawn_lines);
+        for (unsigned i = 0; i < 32; ++i)
+            assert(!text_slots[i][0]);
+    }
+    visible.where = OPUS_FX_DRUM;
+    visible.on = 1;
+    selected = 0;
 }
 
 static void test_companion_activity(short params[PARAM_COUNT])
@@ -540,6 +566,8 @@ static void test_grip_connection(void)
            grip_companion->hold_state == hits_fluke_hold_state);
 }
 
+void opus_key_timer(struct opl_self *self, unsigned ms, void (*fn)(void))
+{ (void)self; assert(ms == 120); fn(); }
 int main(void)
 {
     struct opl_self self = {0};
