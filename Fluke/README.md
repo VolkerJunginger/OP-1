@@ -15,7 +15,9 @@ All four devices now accelerate continuous encoder adjustments. FLUX 1.0.2 also 
 
 ## Install
 
-The full set requires **Opus core 2.57 or newer**. Put the selected `.opmod` files in the OP-1 disk’s `mods` folder, eject, and restart. Replace earlier builds by filename, including any FLUX build with a higher development version. Remove the old `hitsfluke.opmod` if installed.
+The full set requires **Opus core 2.57 or newer**. Put the selected `.opmod` files in the OP-1 disk’s `mods` folder, eject, and restart. 
+
+**Important! Delete earlier builds by filename and restart first!** Remove the old `hitsfluke.opmod` if installed.
 
 - **FLUKE:** Choose it in the Synth or Drum sequencer list. In Drum mode, Shift + Note selects a lane, which HITS and FLUX can follow when installed.
 - **HITS:** In Drum mode use Shift + T1 to choose HITS.
