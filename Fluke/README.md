@@ -6,18 +6,22 @@ Four Opus plugins for the **original Teenage Engineering OP-1**, firmware **246*
 
 | Device | Version | What it does |
 | --- | --- | --- |
-| [FLUKE](../docs/downloads/fluke.opmod) | 2.0.1 | Generative melody and six-lane drum sequencer |
-| [HITS](../docs/downloads/hits.opmod) | 1.0.1 | 24 drum pads and 17 synthesis models |
-| [FLUX](../docs/downloads/flux.opmod) | 1.0.2 | Two independent LFOs per HITS pad |
-| [GRIP](../docs/downloads/grip.opmod) | 1.0.1 | Compressor for synth, drum, and master FX |
+| [FLUKE](../docs/downloads/fluke.zip) | 2.0.4 | Generative melody and six-lane drum sequencer |
+| [HITS](../docs/downloads/hits.zip) | 1.0.4 | 24 drum pads and 17 synthesis models |
+| [FLUX](../docs/downloads/flux.zip) | 1.0.5 | Two independent LFOs per HITS pad |
+| [GRIP](../docs/downloads/grip.zip) | 1.0.3 | Compressor for synth, drum, and master FX |
 
-All four devices now accelerate continuous encoder adjustments. FLUX 1.0.2 also shows “needs hits” when selected in the Synth slot. The native LFO OFF display remains an open issue. Build and host tests passed. Hardware verification of these updates is pending.
+All four devices now accelerate continuous encoder adjustments. FLUX 1.0.5 also shows “needs hits” when selected in the Synth slot. The native LFO OFF display remains an open issue. Build and host tests passed. 
 
 ## Install
 
-The full set requires **Opus core 2.57 or newer**. Put the selected `.opmod` files in the OP-1 disk’s `mods` folder, eject, and restart. 
+The full set requires **Opus core 2.57 or newer**.
 
-**Important! Delete earlier builds by filename and restart first!** Remove the old `hitsfluke.opmod` if installed.
+1. Back up your current plugins and any sounds you want to keep. Delete the older copies of the devices you are updating from the OP-1’s `mods` folder, including `hitsfluke.opmod` if present. Eject and restart.
+2. Extract the downloaded ZIP. Copy the selected `.opmod` files to the OP-1’s `mods` folder, eject, and restart again.
+3. Update HITS and FLUX together. FLUX 1.0.5 requires the new HITS plugin ID `esc.hits`.
+
+HITS, FLUX, and GRIP use new plugin IDs. Existing sounds and settings tied to the previous IDs may require the older builds. The maintainer confirmed that the new devices run on the original OP-1. Recall of existing sounds with the new IDs has not been verified.
 
 - **FLUKE:** Choose it in the Synth or Drum sequencer list. In Drum mode, Shift + Note selects a lane, which HITS and FLUX can follow when installed.
 - **HITS:** In Drum mode use Shift + T1 to choose HITS.
@@ -30,6 +34,6 @@ Builds and desktop tests passed. Screen images are desktop previews.
 
 ## Credits
 
-Created and adapted for Opus by Volker Junginger / ESC_CODE, with GRIP credited to op1lab. FLUKE and HITS draw on Mutable Instruments’ Marbles, Grids, and Braids. See the [linked credits on the device page](https://volkerjunginger.github.io/OP-1/#credits) and [source notices](Source/README.md).
+Created and adapted for Opus by Volker Junginger / ESC_CODE. FLUKE and HITS draw on Mutable Instruments’ Marbles, Grids, and Braids. See the [linked credits on the device page](https://volkerjunginger.github.io/OP-1/#credits) and [source notices](Source/README.md).
 
 [Original FLUKE 1.0.0 release](https://github.com/VolkerJunginger/OP-1/releases/tag/fluke-v1.0.0)

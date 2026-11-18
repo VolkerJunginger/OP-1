@@ -1,6 +1,6 @@
-# FLUX 1.0.2
+# FLUX 1.0.5
 
-A dedicated T4 modulator for HITS on the original OP-1. Requires Opus 2 core 2.33 or newer and HITS 1.0.0 or newer. HITS and FLUKE each load alone. When both are installed, they connect automatically on opening HITS or FLUX.
+A dedicated T4 modulator for HITS on the original OP-1. Requires Opus 2 core 2.33 or newer and HITS 1.0.2 or newer with plugin ID `esc.hits`. HITS and FLUKE each load alone. When both are installed, they connect automatically on opening HITS or FLUX.
 
 ## Install and play
 

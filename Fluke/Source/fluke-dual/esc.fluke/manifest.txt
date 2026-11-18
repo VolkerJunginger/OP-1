@@ -1,8 +1,8 @@
 opmod 1
 id esc.fluke
 name Fluke
-author Volker / Marbles by E. Gillet
-version 2.0.1
+author ESC_CODE & Marbles by E. Gillet
+version 2.0.4
 core 2.57
 adds synth sequencer fluke
 adds drum sequencer fluke

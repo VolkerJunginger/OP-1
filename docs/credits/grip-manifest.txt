@@ -1,8 +1,8 @@
 opmod 1
-id op1lab.cleancomp
+id esc.grip
 name GRIP
-author op1lab
-version 1.0.1
+author ESC_CODE
+version 1.0.3
 core 2.34
 adds effect grip
 uses white_push noshift nofn modal "kick sc"
