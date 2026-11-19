@@ -262,7 +262,7 @@ static void grip_expire(void) { grip_speed.burst = 0; }
 
 static int kick_sc_available(const struct opus_page *page, int hits)
 {
-    return page->where != OPUS_FX_MASTER && hits;
+    return page->where == OPUS_FX_DRUM && hits;
 }
 
 static int page_key(struct opus_page *pg, int key, int pressed)
@@ -286,7 +286,7 @@ static int page_key(struct opus_page *pg, int key, int pressed)
     if (!pg->on || fw_shift_held() || opus_fn_held())
         return 0;
     if (key == 0x3e)
-        return hits_link->hold_key(pressed);
+        return pg->where != OPUS_FX_SYNTH && hits_link->hold_key(pressed);
     if (key != 0x3d || !kick_sc_available(pg, hits_link->selected()))
         return 0;
     if (pressed)
@@ -426,7 +426,7 @@ static void screen_draw(void *screen, int dt)
                     sidechain_enabled ? OPUS_RGB(0xcdcdff) : OPUS_RGB(0x55556a),
                     "kick sc");
     int hold = hits_link ? hits_link->hold_state() : -1;
-    if (hold >= 0)
+    if (pg.where != OPUS_FX_SYNTH && hold >= 0)
         native_text(owner, 1, 242, 128, 9,
                     hold ? OPUS_RGB(0xff423f) : OPUS_RGB(0x661a19), "hold");
     for (int i = 0; i < 4; ++i) {

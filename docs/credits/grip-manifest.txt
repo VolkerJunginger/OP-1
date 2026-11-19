@@ -2,7 +2,7 @@ opmod 1
 id esc.grip
 name GRIP
 author ESC_CODE
-version 1.0.3
+version 1.0.4
 core 2.34
 adds effect grip
 uses white_push noshift nofn modal "kick sc"

@@ -121,6 +121,13 @@ int main(void)
 
     hits = 0;
     check_labels(0, 1);
+    shown.where = OPUS_FX_SYNTH;
+    hits = 1;
+    check_labels(0, 0);
+    assert(!effect.page_key(&shown, 0x3d, 1));
+    assert(!effect.page_key(&shown, 0x3e, 1) && hold == 1);
+    hits = 0;
+    check_labels(0, 0);
     shown.where = OPUS_FX_MASTER;
     hits = 1;
     check_labels(0, 1);
