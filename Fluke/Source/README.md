@@ -14,3 +14,5 @@ Run `python3 /path/to/plugin-kit/plugin_tool.py doctor`. From this directory, ru
 Keep the directory structure when building. FLUKE, FLUX, and GRIP include shared headers from HITS.
 
 The original FLUKE project licence is [GPL-3.0](../LICENSE). FLUKE includes [Marbles’ MIT notice](fluke-dual/esc.fluke/LICENSE-Marbles.txt). HITS retains the upstream MIT notices in its Braids-derived sources. GRIP includes its [GPL-3.0 licence](grip-release/Grip/LICENSE).
+
+For GRIP controls by FX location and validation status, see [GRIP README](grip-release/Grip/README.md).

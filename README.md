@@ -4,7 +4,9 @@ Tools and plugins for the **original Teenage Engineering OP-1**.
 
 ## FLUKE, HITS, FLUX and GRIP
 
-**FLUKE 2.0.4** is a generative melody and drum sequencer. **HITS 1.0.4** is a 24-pad drum engine, **FLUX 1.0.5** adds two LFOs per HITS pad, and **GRIP 1.0.3** is a compressor. The set requires original OP-1 firmware 246 and Opus core 2.57 or newer.
+**FLUKE 2.0.4** is a generative melody and drum sequencer. **HITS 1.0.4** is a 24-pad drum engine, **FLUX 1.0.5** adds two LFOs per HITS pad, and **GRIP 1.0.4** is a compressor. The set requires original OP-1 firmware 246 and Opus core 2.57 or newer.
+
+GRIP 1.0.4 hides Kick SC and Hold on synth FX. Kick SC is available on drum FX with HITS selected; Hold is available on drum and master FX with HITS and FLUKE Drum active.
 
 [Device page](https://volkerjunginger.github.io/OP-1/) · [Download all four](docs/downloads/op1-devices.zip) · [Illustrated manual](docs/manuals/FLUKE%20v.2.0.0%20Manual.pdf) · [Installation and source](Fluke)
 

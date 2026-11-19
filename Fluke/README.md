@@ -26,7 +26,7 @@ HITS, FLUX, and GRIP use new plugin IDs. Existing sounds and settings tied to th
 - **FLUKE:** Choose it in the Synth or Drum sequencer list. In Drum mode, Shift + Note selects a lane, which HITS and FLUX can follow when installed.
 - **HITS:** In Drum mode use Shift + T1 to choose HITS.
 - **FLUX:** With HITS selected, choose FLUX using Shift + T4. On T4, push blue to switch LFO A/B. Orange push toggles Hold when FLUKE is active.
-- **GRIP:** Choose it in a synth, drum, or master FX slot. On drum FX, white push toggles Kick SC when HITS is the selected drum engine. Orange push toggles Hold on drum and master FX when HITS is installed and FLUKE Drum is active. Kick SC and Hold are hidden and their buttons are inactive on synth FX.
+- **GRIP:** [Controls and verification](Source/grip-release/Grip/README.md). Choose it in a synth, drum, or master FX slot. On drum FX, white push toggles Kick SC when HITS is the selected drum engine. Orange push toggles Hold on drum and master FX when HITS is installed and FLUKE Drum is active. Kick SC and Hold are hidden and their buttons are inactive on synth FX.
 
 FLUX requires HITS. FLUKE, HITS, and GRIP each load independently. The related controls appear automatically when their companion plugins are available.
 
