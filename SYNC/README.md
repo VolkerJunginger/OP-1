@@ -1,8 +1,8 @@
-# SYNC 1.0
+# SYNC 1.0.1
 
 SYNC is an Opus system mod by **ESC_CODE** for the **original Teenage Engineering OP-1**. It follows USB MIDI Clock, Ableton Link, or an analog pulse. Link Audio sends the OP-1's Master, Tape, Synth, and Drum channels to Ableton Live over USB.
 
-[**Download SYNC 1.0 (ZIP)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0.zip) · [**English manual (PDF)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0-Manual-EN.pdf) · [**Corresponding source (ZIP)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0-Source.zip)
+[**Download SYNC 1.0.1 (ZIP)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0.1.zip) · [**English manual (PDF)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0.1-Manual-EN.pdf) · [**Corresponding source (ZIP)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0.1-Source.zip)
 
 ## Install
 
@@ -10,7 +10,9 @@ SYNC is an Opus system mod by **ESC_CODE** for the **original Teenage Engineerin
 2. Enter Disk mode with **Shift + COM**, then **T3**. If you have the standalone Pulse Sync mod, remove it and restart before installing SYNC. Unzip the download and copy `SYNC.opmod` into the OP-1's `mods` folder. Eject the drive and restart if the OP-1 does not restart automatically.
 3. Hold **Synth + Drum + Tape + Mixer** to open the Opus menu. Press **T2**, select **SYNC** with the blue encoder, and open its settings. Check that SYNC is loaded.
 
-Release 1.0 ships the hardware-tested binary. The Opus mod list displays its internal version **0.3.17**.
+The Opus mod list shows **1.0.1**. If you are updating, remove the previous SYNC mod and restart before installing the new file.
+
+**What changed in 1.0.1.** The Link Audio USB queue now reserves space for every active subscription before processing an audio block. Host tests exercised all seven channels with five and eight simulated listeners. This build passed testing on the original OP-1.
 
 ## Select a clock
 

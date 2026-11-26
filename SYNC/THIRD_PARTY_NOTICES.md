@@ -1,4 +1,4 @@
-# SYNC 1.0 third-party notices
+# SYNC 1.0.1 third-party notices
 
 - **Pulse Sync 1.1.11**, copyright © 2026 Volker Junginger (ESC_CODE), GNU GPL v3. The pulse implementation was modified for SYNC's clock selection and routing.
 - **Ableton Link 4.1.1**, copyright Ableton AG. SYNC uses C ports of Link Core and Link Audio v1 based on tag `Link-4.1.1`, commit `5ba907ae027a8c2ec8824463e37296dcefc5e9be`. Ableton offers GPL v2 or later and a proprietary license. This distribution uses the GPL option and combines the ports with GPL v3 code under GPL v3. The original Link license notice is included in the source and binary archives.
@@ -7,4 +7,4 @@
 
 The binary is a standalone Opus mod for R246. It calls interfaces in the user's installed firmware. The download contains no OP-1 firmware image or smxUSBD distribution.
 
-[Corresponding source (ZIP)](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0-Source.zip)
+[Corresponding source (ZIP)](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0.1-Source.zip)

@@ -2,11 +2,11 @@
 
 Tools and plugins for the **original Teenage Engineering OP-1**.
 
-## SYNC 1.0
+## SYNC 1.0.1
 
 **SYNC** brings USB MIDI Clock, Ableton Link, and analog Pulse Sync to the original OP-1. Link Audio sends Master, Tape 1–4, Synth, and Drum channels to Ableton Live. Requires R246 firmware and Opus Core 2.68 or later.
 
-[**Download SYNC 1.0 (ZIP)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0.zip) · [**English manual (PDF)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0-Manual-EN.pdf) · [Setup, controls and credits](SYNC)
+[**Download SYNC 1.0.1 (ZIP)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0.1.zip) · [**English manual (PDF)**](https://raw.githubusercontent.com/VolkerJunginger/OP-1/main/SYNC/SYNC-1.0.1-Manual-EN.pdf) · [Setup, controls and credits](SYNC)
 
 ## FLUKE, HITS, FLUX and GRIP
 
